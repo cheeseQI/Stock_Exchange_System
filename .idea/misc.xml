@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="508" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/MyBatisUtil.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="567" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/App.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="711" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/build.gradle" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="606" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/resources/mybatis-config.xml" />
+        </OpenedFileInfo>
+      </list>
+    </option>
+  </component>
+</project>
