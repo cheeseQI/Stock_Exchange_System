@@ -2,15 +2,13 @@ import java.time.Instant;
 import java.util.Set;
 
 public class Order {
-    private int id;
+    private int id; //transaction_id
     private String symbol;
     private double amount;
     private double limit_price;
     private Account account;
     private Status status;
     private long time;
-    private Set<Order> splited_orders;
-    private Order parent_order;
 
     public Order(String symbol, double amount, double limit_price, Account account) {
         this.symbol =symbol;
@@ -69,24 +67,13 @@ public class Order {
         this.status = status;
     }
 
-    public Set<Order> getSplitedOrders() {
-        return splited_orders;
-    }
-
-    public void setSplitedOrders(Set<Order> splited_orders) {
-        this.splited_orders = splited_orders;
-    }
-
-    public Order getParentOrder() {
-        return parent_order;
-    }
-
-    public void setParentOrder(Order parent_order) {
-        this.parent_order = parent_order;
-    }
-
     public long getTime() {
         return this.time;
+    }
+
+    public void setTime() {
+        Instant instant = Instant.now();
+        this.time = instant.getEpochSecond();
     }
 
 }
