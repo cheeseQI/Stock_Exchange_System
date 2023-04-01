@@ -9,8 +9,8 @@ public class Order {
     private Account account;
     private Status status;
     private long time;
-    private Set<Order> splitedOrders;
-    private Order parentOrder;
+    private Set<Order> splited_orders;
+    private Order parent_order;
 
     public Order(String symbol, double amount, double limit_price, Account account) {
         this.symbol =symbol;
@@ -70,19 +70,19 @@ public class Order {
     }
 
     public Set<Order> getSplitedOrders() {
-        return splitedOrders;
+        return splited_orders;
     }
 
-    public void setSplitedOrders(Set<Order> splitedOrders) {
-        this.splitedOrders = splitedOrders;
+    public void setSplitedOrders(Set<Order> splited_orders) {
+        this.splited_orders = splited_orders;
     }
 
     public Order getParentOrder() {
-        return parentOrder;
+        return parent_order;
     }
 
-    public void setParentOrder(Order parentOrder) {
-        this.parentOrder = parentOrder;
+    public void setParentOrder(Order parent_order) {
+        this.parent_order = parent_order;
     }
 
     public long getTime() {
