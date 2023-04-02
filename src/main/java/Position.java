@@ -20,7 +20,6 @@ public class Position {
         this.account = account;
     }
 
-
     public double getAmount() {
         return amount;
     }
