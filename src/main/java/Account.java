@@ -4,6 +4,7 @@ public class Account {
     //private HashSet<Position> positions; //todo: may need delete this position set, and use multiple table select
     public Account() {
     }
+
     public Account(double balance) {
         this.balance = balance;
     }

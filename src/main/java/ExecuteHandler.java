@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class ExecuteHandler extends OrderActionsHandler{
+public class ExecuteHandler extends ActionsHandler {
     private ArrayList<Order> buyOrders;
     private ArrayList<Order> sellOrders;
 
@@ -66,7 +66,6 @@ public class ExecuteHandler extends OrderActionsHandler{
             Order orderExecuted = new Order(order.getSymbol(), machtedAmount, order.getLimit_price(), order.getAccount());
             orderExecuted.setStatus(Status.EXECUTED);
             orders.set(0, orderOpen); // Replace the original order with the split order
-
             // TODO: delete the origin order from database
 
             // TODO: write to database
