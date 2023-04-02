@@ -1,3 +1,6 @@
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,27 +24,32 @@ public class MatchingEngine {
 
                 // Read the XML data from the client
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                StringBuilder xmlData = new StringBuilder();
-                String line;
-                while (!(line = reader.readLine()).isEmpty()) {
-                    xmlData.append(line);
-                }
+                int xmlLength = Integer.parseInt(reader.readLine());
+                char[] xmlData = new char[xmlLength];
 
-                System.out.println("Received XML data:\n" + xmlData.toString());
+                reader.read(xmlData, 0, xmlLength);
+                String xml = new String(xmlData);
+
+                System.out.println("Received XML length: " + xmlLength);
+                System.out.println("Received XML data: " + xml);
+                XMLParser xmlParser = new XMLParser(xml);
+                xmlParser.parseXML();
 
                 // Process the XML data and generate a response
                 String xmlResponse = "<response><status>success</status></response>";
-
                 // Send the XML response to the client
                 OutputStream outputStream = socket.getOutputStream();
                 PrintWriter writer = new PrintWriter(outputStream, true);
                 writer.println(xmlResponse);
                 writer.flush(); // Ensure the response is sent
-
                 reader.close();
                 writer.close();
                 socket.close();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
                 e.printStackTrace();
             }
         }
@@ -59,7 +67,6 @@ public class MatchingEngine {
 
                 // Create a new task for each connected client
                 ClientHandler clientHandler = new ClientHandler(socket);
-
                 // Submit the task to the thread pool
                 executorService.submit(clientHandler);
             }

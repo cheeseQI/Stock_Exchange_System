@@ -1,37 +1,31 @@
-import java.util.HashSet;
-
 public class Account {
-    private String account_num;
+    private int accountId;
     private double balance;
-    private HashSet<Position> positions; //TODO: figure out if need to change to map for convenience
-
-    public Account(String account_num, double balance) {
-        this.account_num = account_num;
+    //private HashSet<Position> positions; //todo: may need delete this position set, and use multiple table select
+    public Account() {
+    }
+    public Account(double balance) {
         this.balance = balance;
-        this.positions = new HashSet<>();
     }
 
-    public String getAccount_num() {
-        return account_num;
+    public Account(int accountId, double balance) {
+        this.accountId = accountId;
+        this.balance = balance;
     }
 
     public double getBalance() {
         return balance;
     }
 
-    public HashSet<Position> getPositions() {
-        return positions;
-    }
-
-    public void setAccount_num(String account_num) {
-        this.account_num = account_num;
-    }
-
     public void setBalance(double balance) {
         this.balance = balance;
     }
 
-    public void setPositions(HashSet<Position> positions) {
-        this.positions = positions;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
+    }
+
+    public int getAccountId() {
+        return accountId;
     }
 }

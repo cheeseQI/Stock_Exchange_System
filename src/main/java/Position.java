@@ -1,19 +1,30 @@
 public class Position {
-    public double amount;
+    private int positionId;
+    private double amount;
     private String symbol;
     private Account account;
 
-    public Position(double amount, String symbol, Account account) {
-        this.amount= amount;
+    public Position() {
+    }
+
+    public Position(int positionId, double amount, String symbol, Account account) {
+        this.positionId = positionId;
+        this.amount = amount;
         this.symbol = symbol;
         this.account = account;
     }
 
-    public double getAccount_num() {
+    public Position(double amount, String symbol, Account account) {
+        this.amount = amount;
+        this.symbol = symbol;
+        this.account = account;
+    }
+
+    public double getAmount() {
         return amount;
     }
 
-    public void setAccount_num(double amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -31,5 +42,14 @@ public class Position {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+
+    public int getPositionId() {
+        return positionId;
+    }
+
+    public void setPositionId(int positionId) {
+        this.positionId = positionId;
     }
 }

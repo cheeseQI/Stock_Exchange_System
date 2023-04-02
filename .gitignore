@@ -1,1 +1,3 @@
 mybatis-config.xml
+/build/
+*.class

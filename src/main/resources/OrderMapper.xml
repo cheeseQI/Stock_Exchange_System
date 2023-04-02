@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OrderMapper">
+    <resultMap id="OrderResultMap" type="Order">
+        <id property="id" column="id"/>
+        <result property="symbol" column="symbol"/>
+        <result property="amount" column="amount"/>
+        <result property="limit_price" column="limit_price"/>
+        <result property="status" column="status"/>
+        <result property="time" column="time"/>
+        <association property="account" column="account_id" javaType="Account" resultMap="AccountMapper.accountResultMap"/>
+    </resultMap>
+
+    <insert id="insertOrder" parameterType="Order">
+        INSERT INTO order_table (symbol, amount, limit_price, account_id, status, time)
+        VALUES (#{symbol}, #{amount}, #{limit_price}, #{account.accountId}, #{status}, #{time})
+    </insert>
+
+    <select id="findOrderById" resultMap="OrderResultMap" parameterType="int">
+        SELECT * FROM order_table WHERE id = #{id}
+    </select>
+
+    <update id="updateOrder" parameterType="Order">
+        UPDATE order_table
+        SET symbol = #{symbol}, amount = #{amount}, limit_price = #{limit_price}, account_id = #{account.accountId}, status = #{status}, time = #{time}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteOrder" parameterType="int">
+        DELETE FROM order_table WHERE id = #{id}
+    </delete>
+
+</mapper>
