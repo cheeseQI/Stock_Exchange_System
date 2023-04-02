@@ -7,13 +7,56 @@ import org.apache.ibatis.session.SqlSessionFactory;
 public class App {
 
     public static void main(String[] args) {
-        MatchingEngine matchingEngine = new MatchingEngine();
-        matchingEngine.start();
-
+//        MatchingEngine matchingEngine = new MatchingEngine();
+//        matchingEngine.start();
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            // Execute your database operations here
-            System.out.println("connect successfully");
+            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
+            PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
+            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
+            /* insert column */
+//            Account account = new Account(100.0);
+//            accountMapper.insertAccount(account);
+//            sqlSession.commit();
+//            Account targetAccount = accountMapper.getAccountById(1);
+//            Position position = new Position(10, "CNY", targetAccount);
+//            positionMapper.insertPosition(position);
+//            sqlSession.commit();
+
+//            Order order = new Order("CYN", 100, 100, Status.OPEN, targetAccount);
+//            orderMapper.insertOrder(order);
+//            sqlSession.commit();
+//            System.out.println("Insert successful");
+
+            /* select and update column */
+//            Account target = accountMapper.getAccountById(1);
+//            target.setBalance(101);
+//            accountMapper.updateAccount(target);
+//            sqlSession.commit();
+//            Position position = positionMapper.getPositionById(1);
+//            position.setAmount(1000);
+//            positionMapper.updatePosition(position);
+//            sqlSession.commit();
+//            System.out.println("Update successful");
+//            Order order = orderMapper.findOrderById(2);
+//            order.setTime();
+//            orderMapper.updateOrder(order);
+//            sqlSession.commit();
+//            System.out.println("Update successful");
+
+            /* delete column */
+//            accountMapper.deleteAccount(3);
+//            sqlSession.commit();
+//            positionMapper.deletePositionById(2);
+//            sqlSession.commit();
+//            System.out.println("Delete successful");
+            orderMapper.deleteOrder(3);
+            sqlSession.commit();
+            System.out.println("Delete successful");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 }

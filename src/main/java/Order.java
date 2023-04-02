@@ -6,9 +6,20 @@ public class Order {
     private String symbol;
     private double amount;
     private double limit_price;
-    private Account account;
     private Status status;
     private long time;
+    private Account account;
+
+    public Order(){}
+    public Order(String symbol, double amount, double limit_price, Status status, Account account) {
+        this.symbol =symbol;
+        this.amount = amount;
+        this.limit_price = limit_price;
+        this.status = status;
+        this.account = account;
+        Instant instant = Instant.now();
+        this.time = instant.getEpochSecond();
+    }
 
     public Order(String symbol, double amount, double limit_price, Account account) {
         this.symbol =symbol;
