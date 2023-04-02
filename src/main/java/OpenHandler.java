@@ -1,4 +1,4 @@
-public class OpenHandler extends OrderActionsHandler{
+public class OpenHandler extends ActionsHandler {
     private int transaction_id;
 
     public OpenHandler(int id) {

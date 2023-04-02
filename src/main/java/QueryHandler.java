@@ -1,4 +1,4 @@
-public class QueryHandler extends OrderActionsHandler{
+public class QueryHandler extends ActionsHandler {
     private int transaction_id;
     private int account_id;
 

@@ -1,4 +1,4 @@
-public class CancelHandler extends OrderActionsHandler{
+public class CancelHandler extends ActionsHandler {
     private int transaction_id;
     private int account_id;
 

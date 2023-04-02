@@ -107,7 +107,7 @@ public class XMLParser {
     }
 
     public void buildCreateXMLReply() {
-
+        // get results from parser
     }
 
     public void buildTransXMLReply() {

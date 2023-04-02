@@ -1,4 +1,4 @@
-public abstract class OrderActionsHandler {
+public abstract class ActionsHandler {
 
     public abstract void executeAction();
 

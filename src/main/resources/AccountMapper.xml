@@ -10,7 +10,7 @@
         SELECT * FROM account WHERE account_id = #{accountId}
     </select>
 
-    <insert id="insertAccount" useGeneratedKeys="true" keyProperty="account_id">
+    <insert id="insertAccount" useGeneratedKeys="true" keyProperty="accountId">
         INSERT INTO account (balance)
         VALUES (#{balance})
     </insert>
