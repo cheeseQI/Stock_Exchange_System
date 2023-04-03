@@ -12,7 +12,7 @@ public class ExecuteHandler extends ActionsHandler {
 
 
     @Override
-    public void executeAction(){
+    public String executeAction(){
         //addOrder
 
         //matchOrder
@@ -22,6 +22,7 @@ public class ExecuteHandler extends ActionsHandler {
         //TODO: update position info
 
         //TODO: write to database
+        return null;
     }
 
     public void addOrder(Order order) {

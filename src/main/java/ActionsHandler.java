@@ -1,6 +1,6 @@
 public abstract class ActionsHandler {
 
-    public abstract void executeAction();
+    public abstract String executeAction();
 
 
 }

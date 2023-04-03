@@ -8,8 +8,8 @@ public class QueryHandler extends ActionsHandler {
     }
 
     @Override
-    public void executeAction() {
-
+    public String executeAction() {
+        return null;
     }
 
     public int getAccount_id() {

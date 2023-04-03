@@ -1,7 +1,7 @@
 public class CreateAccountHandler extends ActionsHandler {
 
     @Override
-    public void executeAction() {
-
+    public String executeAction() {
+        return null;
     }
 }

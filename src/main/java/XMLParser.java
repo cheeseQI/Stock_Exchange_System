@@ -12,11 +12,13 @@ import java.io.IOException;
 
 public class XMLParser {
     private final Document doc;
+    private String response;
 
     public XMLParser(String xmlString) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         this.doc = dBuilder.parse(new ByteArrayInputStream(xmlString.getBytes()));
+        this.response = "<results>\n";
     }
 
     public void parseXML() {
@@ -30,8 +32,9 @@ public class XMLParser {
         } else {
             throw new IllegalArgumentException("invalid xml format");
         }
+        response += "</results>\n";
     }
-
+    // todo: append content to response in the parse method
     public void parseCreateXML(Element createElement) {
         try {
             NodeList childNodes = createElement.getChildNodes();
