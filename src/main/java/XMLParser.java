@@ -92,11 +92,13 @@ public class XMLParser {
                             String queryTransId = childElem.getAttribute("id");
                             System.out.println("Query - Transaction ID: " + queryTransId);
                             QueryHandler queryHandler = new QueryHandler(Long.parseLong(queryTransId), Integer.parseInt(accountId));
-                            String res = queryHandler.executeAction();
+                            response += queryHandler.executeAction();
                             break;
                         case "cancel":
                             String cancelTransId = childElem.getAttribute("id");
                             System.out.println("Cancel - Transaction ID: " + cancelTransId);
+                            CancelHandler cancelHandler = new CancelHandler(Long.parseLong(cancelTransId), Integer.parseInt(accountId));
+                            response += cancelHandler.executeAction();
                             break;
                         default:
                             throw new IllegalArgumentException("Invalid transaction type: " + childElem.getNodeName());
@@ -109,7 +111,7 @@ public class XMLParser {
     }
 
     public void buildCreateXMLReply() {
-        // get results from parser
+        // send the response to client
     }
 
     public void buildTransXMLReply() {
