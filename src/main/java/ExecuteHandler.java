@@ -62,9 +62,10 @@ public class ExecuteHandler extends ActionsHandler {
         }
         else {
             //split order
-            Order orderOpen = new Order(order.getSymbol(), order.getAmount() - machtedAmount, order.getLimit_price(), order.getAccount());
+            // todo: 占位符transid，后面需要自己填
+            Order orderOpen = new Order(-1, order.getSymbol(), order.getAmount() - machtedAmount, order.getLimit_price(), order.getAccount());
             orderOpen.setStatus(Status.OPEN);
-            Order orderExecuted = new Order(order.getSymbol(), machtedAmount, order.getLimit_price(), order.getAccount());
+            Order orderExecuted = new Order(-1, order.getSymbol(), machtedAmount, order.getLimit_price(), order.getAccount());
             orderExecuted.setStatus(Status.EXECUTED);
             orders.set(0, orderOpen); // Replace the original order with the split order
             // TODO: delete the origin order from database

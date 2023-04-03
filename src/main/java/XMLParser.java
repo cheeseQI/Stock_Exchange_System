@@ -91,6 +91,8 @@ public class XMLParser {
                         case "query":
                             String queryTransId = childElem.getAttribute("id");
                             System.out.println("Query - Transaction ID: " + queryTransId);
+                            QueryHandler queryHandler = new QueryHandler(Integer.parseInt(queryTransId), Integer.parseInt(accountId));
+                            queryHandler.executeAction();
                             break;
                         case "cancel":
                             String cancelTransId = childElem.getAttribute("id");

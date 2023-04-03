@@ -2,7 +2,8 @@ import java.time.Instant;
 import java.util.Set;
 
 public class Order {
-    private int id; //transaction_id
+    private int id;
+    private long transId;
     private String symbol;
     private double amount;
     private double limit_price;
@@ -11,7 +12,8 @@ public class Order {
     private Account account;
 
     public Order(){}
-    public Order(String symbol, double amount, double limit_price, Status status, Account account) {
+    public Order(long transId, String symbol, double amount, double limit_price, Status status, Account account) {
+        this.transId = transId;
         this.symbol =symbol;
         this.amount = amount;
         this.limit_price = limit_price;
@@ -21,8 +23,9 @@ public class Order {
         this.time = instant.getEpochSecond();
     }
 
-    public Order(String symbol, double amount, double limit_price, Account account) {
-        this.symbol =symbol;
+    public Order(long transId, String symbol, double amount, double limit_price, Account account) {
+        this.transId = transId;
+        this.symbol = symbol;
         this.amount = amount;
         this.limit_price = limit_price;
         this.account = account;
@@ -85,6 +88,18 @@ public class Order {
     public void setTime() {
         Instant instant = Instant.now();
         this.time = instant.getEpochSecond();
+    }
+
+    public long getTransId() {
+        return transId;
+    }
+
+    public void setTransId(long trans_id) {
+        this.transId = trans_id;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
 }
