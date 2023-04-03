@@ -1,17 +1,30 @@
 public class Account {
+    // primary key
     private int accountId;
     private double balance;
+    // user choose
+    private String accountNum;
     //private HashSet<Position> positions; //todo: may need delete this position set, and use multiple table select
     public Account() {
     }
 
-    public Account(double balance) {
+    public Account(double balance, String accountNum) {
         this.balance = balance;
+        this.accountNum = accountNum;
     }
 
-    public Account(int accountId, double balance) {
+    public Account(int accountId, double balance, String accountNum) {
         this.accountId = accountId;
         this.balance = balance;
+        this.accountNum = accountNum;
+    }
+
+    public String getAccountNum() {
+        return accountNum;
+    }
+
+    public void setAccountNum(String accountNum) {
+        this.accountNum = accountNum;
     }
 
     public double getBalance() {

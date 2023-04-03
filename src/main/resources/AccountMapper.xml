@@ -4,19 +4,23 @@
     <resultMap id="accountResultMap" type="Account">
         <id column="account_id" property="accountId"/>
         <result column="balance" property="balance"/>
+        <result column="account_num" property="accountNum"/>
     </resultMap>
 
     <select id="getAccountById" resultMap="accountResultMap">
         SELECT * FROM account WHERE account_id = #{accountId}
     </select>
+    <select id="getAccountByNum" resultMap="accountResultMap">
+        SELECT * FROM account WHERE account_num = #{accountNum}
+    </select>
 
     <insert id="insertAccount" useGeneratedKeys="true" keyProperty="accountId">
-        INSERT INTO account (balance)
-        VALUES (#{balance})
+        INSERT INTO account (balance, account_num)
+        VALUES (#{balance}, #{accountNum})
     </insert>
 
     <update id="updateAccount">
-        UPDATE account SET balance = #{balance}
+        UPDATE account SET balance = #{balance}, account_num = #{accountNum}
         WHERE account_id = #{accountId}
     </update>
 

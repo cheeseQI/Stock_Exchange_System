@@ -16,9 +16,12 @@ public class App {
 //            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
 //            PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
 //            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
-
+//            List<Account> res = accountMapper.getAccountByNum("76453");
+//            if (!res.isEmpty()) {
+//                System.out.println("same user name already exist!");
+//            }
             /* insert column */
-//            Account account = new Account(10.0);
+//            Account account = new Account(10.0, "76453");
 //            accountMapper.insertAccount(account);
 //            sqlSession.commit();
 //            Account targetAccount = accountMapper.getAccountById(6);
@@ -34,6 +37,7 @@ public class App {
             /* select and update column */
 //            Account target = accountMapper.getAccountById(1);
 //            target.setBalance(101);
+//            target.setAccountNum("132");
 //            accountMapper.updateAccount(target);
 //            sqlSession.commit();
 //            Position position = positionMapper.getPositionById(1);
