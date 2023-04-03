@@ -11,6 +11,7 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
+<<<<<<< HEAD
           <option name="caretOffset" value="0" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/OpenHandler.java" />
         </OpenedFileInfo>
@@ -33,6 +34,42 @@
         <OpenedFileInfo>
           <option name="caretOffset" value="775" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/CreateAccountHandler.java" />
+=======
+          <option name="caretOffset" value="3251" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/App.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="2133" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/test/java/XMLParserTest.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="299" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/MyBatisUtil.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1309" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/resources/OrderMapper.xml" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="124" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/OrderMapper.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1799" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/Order.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="41" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/Status.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="4511" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/XMLParser.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1003" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/QueryHandler.java" />
+>>>>>>> e6b64cec85ac19542e95baa0c27d346a494819b9
         </OpenedFileInfo>
       </list>
     </option>
