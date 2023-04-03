@@ -11,44 +11,32 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="16" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/Account.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="211" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/test/java/MatchingEngineTest.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="166" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/Position.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="176" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/AccountMapper.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="24" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/OrderMapper.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="131" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/PositionMapper.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="5214" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/XMLParser.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="211" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/OpenHandler.java" />
-        </OpenedFileInfo>
-        <OpenedFileInfo>
-          <option name="caretOffset" value="1947" />
+          <option name="caretOffset" value="254" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/ExecuteHandler.java" />
         </OpenedFileInfo>
         <OpenedFileInfo>
           <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/OrderActionsHandler.java" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/OpenHandler.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="2128" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/XMLParser.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="106" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/CreateSymbolHandler.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="302" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/Account.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="709" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/App.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="838" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/CreateAccountHandler.java" />
         </OpenedFileInfo>
       </list>
     </option>
