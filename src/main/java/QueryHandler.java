@@ -1,23 +1,60 @@
-public class QueryHandler extends ActionsHandler {
-    private int transaction_id;
-    private int account_id;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
-    public QueryHandler(int transaction_id, int account_id) {
-        this.transaction_id = transaction_id;
-        this.account_id = account_id;
+import java.util.List;
+
+public class QueryHandler extends ActionsHandler {
+    private long transactionId;
+    private int accountNum;
+
+    public QueryHandler(long transactionId, int accountNum) {
+        this.transactionId = transactionId;
+        this.accountNum = accountNum;
     }
 
     @Override
     public String executeAction() {
-
+        String res = "<status id=\"" + transactionId + "\">\n";
+        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
+            List<Order> orderList = orderMapper.findOrderByTransId(transactionId);
+            if (orderList.isEmpty()) {
+                res += "<error id=\"" + transactionId + "\">" + "transaction id does not exist" + "</error>\n";
+                res += "</status>\n";
+                System.out.println(res);
+                return res;
+            }
+            for (Order order: orderList) {
+                switch (order.getStatus()) {
+                    case OPEN:
+                        res += "<open shares=\"" + order.getAmount() + "\">\n";
+                        break;
+                    case EXECUTED:
+                        // todo: please change the limit price -> real price after execute!
+                        res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getTime() + "\">\n";
+                        break;
+                    case CANCELED:
+                        res += "<canceled shares=\"" + order.getAmount() + "\" time=\"" + order.getTime() + "\">\n";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            res += "</status>\n";
+            System.out.println(res);
+            return res;
+        }  catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
-    public int getAccount_id() {
-        return account_id;
+    public int getAccountNum() {
+        return accountNum;
     }
 
-    public int getTransaction_id() {
-        return transaction_id;
+    public long getTransactionId() {
+        return transactionId;
     }
 }

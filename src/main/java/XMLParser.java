@@ -30,7 +30,7 @@ public class XMLParser {
         } else if (rootEle.equals(XMLConstant.TRANS_TAG)) {
             parseTransactionsXML(rootElement);
         } else {
-            throw new IllegalArgumentException("invalid xml format");
+            throw new IllegalArgumentException("invalid xml format"); // todo: change to xml indicate error
         }
         response += "</results>\n";
     }
@@ -91,8 +91,8 @@ public class XMLParser {
                         case "query":
                             String queryTransId = childElem.getAttribute("id");
                             System.out.println("Query - Transaction ID: " + queryTransId);
-                            QueryHandler queryHandler = new QueryHandler(Integer.parseInt(queryTransId), Integer.parseInt(accountId));
-                            queryHandler.executeAction();
+                            QueryHandler queryHandler = new QueryHandler(Long.parseLong(queryTransId), Integer.parseInt(accountId));
+                            String res = queryHandler.executeAction();
                             break;
                         case "cancel":
                             String cancelTransId = childElem.getAttribute("id");

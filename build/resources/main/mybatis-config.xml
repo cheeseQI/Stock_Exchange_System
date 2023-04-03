@@ -6,7 +6,7 @@
             <transactionManager type="JDBC" />
             <dataSource type="POOLED">
                 <property name="driver" value="org.postgresql.Driver" />
-                <property name="url" value="jdbc:postgresql://localhost:5432/STK" />
+                <property name="url" value="jdbc:postgresql://vcm-32430.vm.duke.edu:5432/postgres?useSSL=true" />
                 <property name="username" value="postgres" />
                 <property name="password" value="hw4" />
             </dataSource>
@@ -14,6 +14,8 @@
     </environments>
 
     <mappers>
-        <!-- List your mapper XML files here -->
+        <mapper class="AccountMapper"/>
+        <mapper class="PositionMapper"/>
+        <mapper class="OrderMapper"/>
     </mappers>
 </configuration>

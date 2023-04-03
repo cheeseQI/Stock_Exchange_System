@@ -46,11 +46,18 @@ public class XMLParserTest {
 
     @Test
     public void testParseQueryFunction() throws IOException, SAXException, ParserConfigurationException {
-        String xml = "<transactions id=\"123456\">\n" +
-                " <query id=\"2\"/> \n" +
+        String xml = "<transactions id=\"132\">\n" +
+                " <query id=\"1\"/> \n" +
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
     }
-
+    @Test
+    public void testParseQueryFunctionInvalidId() throws IOException, SAXException, ParserConfigurationException {
+        String xml = "<transactions id=\"132\">\n" +
+                " <query id=\"55\"/> \n" +
+                "</transactions>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+    }
 }
