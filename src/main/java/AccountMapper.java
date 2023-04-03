@@ -1,5 +1,7 @@
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 public interface AccountMapper {
 
     Account getAccountById(String accountId);
@@ -9,5 +11,7 @@ public interface AccountMapper {
     void updateAccount(Account account);
 
     void deleteAccount(String accountId);
+
+    List<Account> getAccountByNum(String accountNum);
 
 }

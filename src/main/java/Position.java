@@ -44,7 +44,6 @@ public class Position {
         this.account = account;
     }
 
-
     public int getPositionId() {
         return positionId;
     }

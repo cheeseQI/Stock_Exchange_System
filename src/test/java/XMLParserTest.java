@@ -12,7 +12,6 @@ public class XMLParserTest {
     public void testParseCreateXML() throws IOException, SAXException, ParserConfigurationException {
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<create>\n" +
                 " <account id=\"123457\" balance=\"1000\"/>\n" +
-                " <account id=\"123456\" balance=\"1000\"/>\n" +
                 " <symbol sym=\"USD\">\n" +
                 " <account id=\"123456\">100</account>\n" +
                 " <account id=\"123457\">101</account>\n" +
@@ -20,6 +19,7 @@ public class XMLParserTest {
                 " <symbol sym=\"CYN\">\n" +
                 " <account id=\"123456\">100</account>\n" +
                 " </symbol>\n" +
+                " <account id=\"123456\" balance=\"1000\"/>\n" +
                 "</create>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
@@ -39,6 +39,15 @@ public class XMLParserTest {
                 " <order sym=\"USD\" amount=\"100\" limit=\"80\"/> \n" +
                 " <query id=\"abc\"/> \n" +
                 " <cancel id=\"abc\"/>\n" +
+                "</transactions>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+    }
+
+    @Test
+    public void testParseQueryFunction() throws IOException, SAXException, ParserConfigurationException {
+        String xml = "<transactions id=\"123456\">\n" +
+                " <query id=\"2\"/> \n" +
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();

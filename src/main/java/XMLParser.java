@@ -12,11 +12,13 @@ import java.io.IOException;
 
 public class XMLParser {
     private final Document doc;
+    private String response;
 
     public XMLParser(String xmlString) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         this.doc = dBuilder.parse(new ByteArrayInputStream(xmlString.getBytes()));
+        this.response = "<results>\n";
     }
 
     public void parseXML() {
@@ -30,42 +32,40 @@ public class XMLParser {
         } else {
             throw new IllegalArgumentException("invalid xml format");
         }
+        response += "</results>\n";
     }
-
+    // todo: append content to response in the parse method
     public void parseCreateXML(Element createElement) {
         try {
-            NodeList accountNodes = createElement.getElementsByTagName(XMLConstant.ACCOUNT_TAG);
-            NodeList symbolNodes = createElement.getElementsByTagName(XMLConstant.SYM_TAG);
-            for (int i = 0; i < accountNodes.getLength(); i++) {
-                Node accountNode = accountNodes.item(i);
-                if (accountNode.getNodeType() == Node.ELEMENT_NODE && accountNode.getParentNode().getNodeName().equals(XMLConstant.CREATE_TAG)) {
-                    Element accountElem = (Element) accountNode;
-                    String accountId = accountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
-                    String balance = accountElem.getAttribute(XMLConstant.BALANCE_TAG);
-                    System.out.println("Account ID: " + accountId + ", Balance: " + balance);
-                }
-            }
+            NodeList childNodes = createElement.getChildNodes();
 
-            for (int i = 0; i < symbolNodes.getLength(); i++) {
-                Node symbolNode = symbolNodes.item(i);
-                if (symbolNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element symbolElem = (Element) symbolNode;
-                    String sym = symbolElem.getAttribute(XMLConstant.SYM_ATTRIBUTE);
-                    System.out.println("Symbol: " + sym);
-                    NodeList symbolAccountList = symbolElem.getElementsByTagName(XMLConstant.ACCOUNT_TAG);
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node childNode = childNodes.item(i);
 
-                    for (int j = 0; j < symbolAccountList.getLength(); j++) {
-                        Node symbolAccountNode = symbolAccountList.item(j);
-                        if (symbolAccountNode.getNodeType() == Node.ELEMENT_NODE) {
-                            Element symbolAccountElem = (Element) symbolAccountNode;
-                            String symbolAccountId = symbolAccountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
-                            String num = symbolAccountElem.getTextContent();
-                            System.out.println("Symbol Account ID: " + symbolAccountId + ", NUM: " + num);
+                if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                    if (childNode.getNodeName().equals(XMLConstant.ACCOUNT_TAG) && childNode.getParentNode().getNodeName().equals(XMLConstant.CREATE_TAG)) {
+                        Element accountElem = (Element) childNode;
+                        String accountId = accountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
+                        String balance = accountElem.getAttribute(XMLConstant.BALANCE_TAG);
+                        System.out.println("Account ID: " + accountId + ", Balance: " + balance);
+                    } else if (childNode.getNodeName().equals(XMLConstant.SYM_TAG)) {
+                        Element symbolElem = (Element) childNode;
+                        String sym = symbolElem.getAttribute(XMLConstant.SYM_ATTRIBUTE);
+                        System.out.println("Symbol: " + sym);
+                        NodeList symbolAccountList = symbolElem.getElementsByTagName(XMLConstant.ACCOUNT_TAG);
+
+                        for (int j = 0; j < symbolAccountList.getLength(); j++) {
+                            Node symbolAccountNode = symbolAccountList.item(j);
+                            if (symbolAccountNode.getNodeType() == Node.ELEMENT_NODE) {
+                                Element symbolAccountElem = (Element) symbolAccountNode;
+                                String symbolAccountId = symbolAccountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
+                                String num = symbolAccountElem.getTextContent();
+                                System.out.println("Symbol Account ID: " + symbolAccountId + ", NUM: " + num);
+                            }
                         }
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,6 +91,8 @@ public class XMLParser {
                         case "query":
                             String queryTransId = childElem.getAttribute("id");
                             System.out.println("Query - Transaction ID: " + queryTransId);
+                            QueryHandler queryHandler = new QueryHandler(Integer.parseInt(queryTransId), Integer.parseInt(accountId));
+                            queryHandler.executeAction();
                             break;
                         case "cancel":
                             String cancelTransId = childElem.getAttribute("id");

@@ -6,5 +6,7 @@ public class OpenHandler extends ActionsHandler {
     }
 
     @Override
-    public void executeAction(){}
+    public String executeAction(){
+        return null;
+    }
 }

@@ -3,6 +3,7 @@
 <mapper namespace="OrderMapper">
     <resultMap id="OrderResultMap" type="Order">
         <id property="id" column="id"/>
+        <result property="transId" column="trans_id"/>
         <result property="symbol" column="symbol"/>
         <result property="amount" column="amount"/>
         <result property="limit_price" column="limit_price"/>
@@ -12,8 +13,8 @@
     </resultMap>
 
     <insert id="insertOrder" parameterType="Order">
-        INSERT INTO order_table (symbol, amount, limit_price, account_id, status, time)
-        VALUES (#{symbol}, #{amount}, #{limit_price}, #{account.accountId}, #{status}, #{time})
+        INSERT INTO order_table (symbol, amount, limit_price, account_id, status, time, trans_id)
+        VALUES (#{symbol}, #{amount}, #{limit_price}, #{account.accountId}, #{status}, #{time}, #{transId})
     </insert>
 
     <select id="findOrderById" resultMap="OrderResultMap" parameterType="int">
@@ -22,7 +23,7 @@
 
     <update id="updateOrder" parameterType="Order">
         UPDATE order_table
-        SET symbol = #{symbol}, amount = #{amount}, limit_price = #{limit_price}, account_id = #{account.accountId}, status = #{status}, time = #{time}
+        SET symbol = #{symbol}, amount = #{amount}, limit_price = #{limit_price}, account_id = #{account.accountId}, status = #{status}, time = #{time}, trans_id= #{transId}
         WHERE id = #{id}
     </update>
 

@@ -1,17 +1,30 @@
 public class Account {
-    private String accountId;
+    // primary key
+    private int accountId;
     private double balance;
-    //private HashSet<Position> positions; //todo: may need delete this position set, and use multiple table select
+    // user choose
+    private String accountNum;
+
     public Account() {
     }
 
-    public Account(double balance) {
+    public Account(double balance, String accountNum) {
         this.balance = balance;
+        this.accountNum = accountNum;
     }
 
-    public Account(String accountId, double balance) {
+    public Account(int accountId, double balance, String accountNum) {
         this.accountId = accountId;
         this.balance = balance;
+        this.accountNum = accountNum;
+    }
+
+    public String getAccountNum() {
+        return accountNum;
+    }
+
+    public void setAccountNum(String accountNum) {
+        this.accountNum = accountNum;
     }
 
     public double getBalance() {
@@ -22,11 +35,11 @@ public class Account {
         this.balance = balance;
     }
 
-    public void setAccountId(String accountId) {
+    public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
 
-    public String getAccountId() {
+    public int getAccountId() {
         return accountId;
     }
 }
