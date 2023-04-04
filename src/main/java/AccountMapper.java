@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface AccountMapper {
 
-    Account getAccountById(int accountId);
+    Account getAccountById(String accountId);
 
     void insertAccount(Account account);
 
     void updateAccount(Account account);
 
-    void deleteAccount(int accountId);
+    void deleteAccount(String accountId);
 
     List<Account> getAccountByNum(String accountNum);
 

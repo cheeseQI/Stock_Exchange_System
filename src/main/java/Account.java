@@ -4,7 +4,7 @@ public class Account {
     private double balance;
     // user choose
     private String accountNum;
-    //private HashSet<Position> positions; //todo: may need delete this position set, and use multiple table select
+
     public Account() {
     }
 
