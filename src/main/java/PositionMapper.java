@@ -13,4 +13,6 @@ public interface PositionMapper {
     void updatePosition(Position position);
 
     void deletePositionById(int positionId);
+
+    List<Position> getPositionsByAccountNum(String accountNum);
 }

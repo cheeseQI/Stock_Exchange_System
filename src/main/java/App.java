@@ -15,6 +15,10 @@ public class App {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
 //            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
 //            PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
+//            List<Position> plist = positionMapper.getPositionsByAccountNum("132");
+//            for (Position p: plist) {
+//                System.out.println(p.getSymbol());
+//            }
 //            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
 //            List<Account> res = accountMapper.getAccountByNum("76453");
 //            if (!res.isEmpty()) {

@@ -21,6 +21,12 @@
         FROM position
         WHERE account_id = #{account.accountId}
     </select>
+    <select id="getPositionsByAccountNum" resultMap="positionResultMap">
+        SELECT p.position_id, p.amount, p.symbol, a.account_id, a.balance, a.account_num
+        FROM position p
+                 JOIN account a ON p.account_id = a.account_id
+        WHERE a.account_num = #{accountNum}
+    </select>
 
     <insert id="insertPosition" parameterType="Position">
         INSERT INTO position (amount, symbol, account_id) VALUES (#{amount}, #{symbol}, #{account.accountId})

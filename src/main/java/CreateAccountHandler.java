@@ -22,12 +22,12 @@ public class CreateAccountHandler extends ActionsHandler {
             Account account = accountMapper.getAccountById(accountNum);
             if (account != null) {
                 res = "<error id=\"ACCOUNT_ID\">Msg</error>";
-                return;
+                return null;
             }
             // create new account
             account = new Account();
             account.setAccountNum(accountNum);
-            account.setBalance(balance);
+            account.setBalance(Double.parseDouble(balance));
             sqlSession.insert("account.createAccount", account);
         } catch (Exception e) {
             e.printStackTrace();
