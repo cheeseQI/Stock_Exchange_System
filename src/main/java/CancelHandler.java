@@ -1,22 +1,40 @@
-public class CancelHandler extends ActionsHandler {
-    private long transaction_id;
-    private int account_id;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
-    public CancelHandler(long transaction_id, int account_id) {
-        this.transaction_id = transaction_id;
-        this.account_id = account_id;
+import java.util.List;
+
+public class CancelHandler extends ActionsHandler {
+    private long transactionId;
+    private int accountId;
+
+    public CancelHandler(long transactionId, int accountId) {
+        this.transactionId = transactionId;
+        this.accountId = accountId;
     }
 
     @Override
     public String executeAction() {
+        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
+            List<Order> orderList = orderMapper.findOrderByTransId(transactionId);
+            for (Order order: orderList) {
+                if (order.getStatus() == Status.OPEN) {
+                    order.setStatus(Status.CANCELED);
+                    // cancel buy - add balance;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
-    public int getAccount_id() {
-        return account_id;
+    public int getAccountId() {
+        return accountId;
     }
 
-    public long getTransaction_id() {
-        return transaction_id;
+    public long getTransactionId() {
+        return transactionId;
     }
 }

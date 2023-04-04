@@ -1,10 +1,6 @@
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class CreateAccountHandler extends ActionsHandler {
     private String accountNum;
     private String balance;

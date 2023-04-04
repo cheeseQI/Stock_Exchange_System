@@ -34,10 +34,13 @@ public class CreateSymbolHandler extends ActionsHandler {
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
         try (SqlSession sqlSession = sqlSessionFactory.openSession()){
             PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
-            List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum); //TODO
+            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
+            List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
             // find if symbol in list
+            boolean found = false;
             for(Position position : positions) {
                 if(position.getSymbol().equals(symbol)) { // Symbol found in the list
+                    found = true;
                     double newShare = position.getAmount() + Double.parseDouble(amount);
                     position.setAmount(newShare);
                     positionMapper.updatePosition(position);
@@ -45,22 +48,16 @@ public class CreateSymbolHandler extends ActionsHandler {
                     break;
                 }
             }
-            if (res.isEmpty()) { //create symbol
-
+            if (!found) { //create symbol
+                List<Account> accountList = accountMapper.getAccountByNum(accountNum);
+                Position position = new Position(Double.parseDouble(amount), symbol, accountList.get(0));
+                positionMapper.insertPosition(position);
+                sqlSession.commit();
             }
-            else { // add share
-
-            }
+            return "<created sym=\"" + symbol + "\" id=\"" + accountNum + "\"/>";
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    /*
-    <symbol sym="SYM"> #0 or more
-        <account id="ACCOUNT_ID">NUM</account> #1 or more
-    </symbol>
-     */
-    //<created sym="SYM" id="ACCOUNT_ID"/>
-    //<error sym="SYM" id="ACCOUNT_ID">Msg</error>
 }
