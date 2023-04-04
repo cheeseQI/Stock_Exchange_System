@@ -1,74 +1,136 @@
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class ExecuteHandler extends ActionsHandler {
     private static ArrayList<Order> buyOrders;
     private static ArrayList<Order> sellOrders;
 
-    public ExecuteHandler() {
+    static {
         buyOrders = new ArrayList<>();
         sellOrders = new ArrayList<>();
-    }
-
-
-    @Override
-    public String executeAction(){
-        //addOrder
-
-        //matchOrder
-
-        //TODO: update account info
-
-        //TODO: update position info
-
-        //TODO: write to database
-        return null;
     }
 
     public void addOrder(Order order) {
         if (order.getAmount() > 0) { //buy
             buyOrders.add(order);
-            buyOrders.sort(Comparator.comparingDouble(Order::getLimit_price).reversed().thenComparingInt(Order::getId));
+            buyOrders.sort(Comparator.comparingDouble(Order::getLimit_price).reversed().thenComparingLong(Order::getTransId));
         } else { //sell
             sellOrders.add(order);
-            sellOrders.sort(Comparator.comparingDouble(Order::getLimit_price).thenComparingInt(Order::getId));
+            sellOrders.sort(Comparator.comparingDouble(Order::getLimit_price).thenComparingLong(Order::getTransId));
         }
     }
 
-    private void matchOrders() {
+    public void deleteOrder(Order order) {
+        if (order.getAmount() > 0) { //buy
+            buyOrders.remove(order);
+        } else if (order.getAmount() < 0) { //sell
+            sellOrders.remove(order);
+        }
+    }
+
+    @Override
+    public String executeAction() { //match orders
         while (!buyOrders.isEmpty() && !sellOrders.isEmpty()) {
             Order buyOrder = buyOrders.get(0);
             Order sellOrder = sellOrders.get(0);
 
             if (buyOrder.getLimit_price() >= sellOrder.getLimit_price()) {
-                double matchedAmount = Math.min(buyOrder.getAmount(), sellOrder.getAmount());
-
+                double sellAmount = Math.abs(sellOrder.getAmount());
+                double matchedAmount = Math.min(buyOrder.getAmount(), sellAmount);
                 buyOrder.setAmount(buyOrder.getAmount() - matchedAmount);
-                orderInfoUpdate(buyOrder, matchedAmount, buyOrders);
-                sellOrder.setAmount(sellOrder.getAmount() - matchedAmount);
-                orderInfoUpdate(sellOrder, matchedAmount, sellOrders);
+                double matchPrice;
+                if (buyOrder.getTransId() > sellOrder.getTransId()) {
+                    matchPrice = sellOrder.getLimit_price();
+                }
+                else {
+                    matchPrice = buyOrder.getLimit_price();
+                }
+                orderInfoUpdate(buyOrder, matchedAmount, buyOrders, matchPrice, false);
+                sellOrder.setAmount(sellOrder.getAmount() + matchedAmount);
+                orderInfoUpdate(sellOrder, matchedAmount, sellOrders, matchPrice, true);
             }
             else {
                 break;
             }
         }
+        return null;
     }
 
-    private void orderInfoUpdate(Order order, double machtedAmount, ArrayList<Order> orders) {
-        if (order.getAmount() == 0) {
-            order.setStatus(Status.EXECUTED);
-            order.setTime();
-            orders.remove(0);
-        }
-        else {
-            //split order
-            // todo: 占位符transid，后面需要自己填
-            Order orderOpen = new Order(-1, order.getSymbol(), order.getAmount() - machtedAmount, order.getLimit_price(), Status.OPEN, order.getAccount());
-            Order orderExecuted = new Order(-1, order.getSymbol(), machtedAmount, order.getLimit_price(), Status.EXECUTED, order.getAccount());
-            orders.set(0, orderOpen); // Replace the original order with the split order
-            // TODO: delete the origin order from database
+    private void orderInfoUpdate(Order order, double matchedAmount, ArrayList<Order> orders, double matchPrice, boolean sell) {
+        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()){
+            PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
+            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
+            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
+            if (order.getAmount() == 0) {
+                order.setLimit_price(matchPrice);
+                order.setStatus(Status.EXECUTED);
+                order.setTime();
+                orderMapper.updateOrder(order);
+                sqlSession.commit();
+                updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
+                orders.remove(0);
+            }
+            else {//split order
+                Order orderOpen = new Order(order.getTransId(), order.getSymbol(), order.getAmount(), order.getLimit_price(), Status.OPEN, order.getAccount());
+                Order orderExecuted;// Replace the original order with the split order
+                if (sell) {
+                    orderExecuted = new Order(order.getTransId(), order.getSymbol(), -matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
+                }
+                else {
+                    orderExecuted = new Order(order.getTransId(), order.getSymbol(), matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
+                }
+                updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
 
-            // TODO: write to database
+                orderMapper.deleteOrder(order.getId());
+                orderMapper.insertOrder(orderExecuted);
+                orderMapper.insertOrder(orderOpen);
+                sqlSession.commit();
+
+                orders.set(0, orderOpen); // Replace the original order with the split order
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateAccountAndPosition(Order order, double matchedAmount, double matchPrice, boolean sell, SqlSession sqlSession, AccountMapper accountMapper, PositionMapper positionMapper) {
+        if (sell) { //update account
+            Account sellAccount = accountMapper.getAccountByNum(order.getAccount().getAccountNum());
+            sellAccount.setBalance(sellAccount.getBalance() + matchedAmount * matchPrice);
+            accountMapper.updateAccount(sellAccount);
+            sqlSession.commit();
+        }
+        else { //update position
+            Account buyAccount = order.getAccount();
+            updatePositionInfo(order.getSymbol(), buyAccount.getAccountNum(), matchedAmount, sqlSession, accountMapper, positionMapper);
+        }
+        sqlSession.commit();
+    }
+
+    private void updatePositionInfo(String symbol, String accountNum, double matchedAmount, SqlSession sqlSession, AccountMapper accountMapper, PositionMapper positionMapper) {
+        List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
+        // find if symbol in list
+        boolean found = false;
+        for(Position position : positions) {
+            if(position.getSymbol().equals(symbol)) { // Symbol found in the list
+                found = true;
+                double newShare = position.getAmount() + matchedAmount;
+                position.setAmount(newShare);
+                positionMapper.updatePosition(position);
+                sqlSession.commit();
+                break;
+            }
+        }
+        if (!found) { //create symbol
+            Account account = accountMapper.getAccountByNum(accountNum);
+            Position position = new Position(matchedAmount, symbol, account);
+            positionMapper.insertPosition(position);
+            sqlSession.commit();
         }
     }
 }

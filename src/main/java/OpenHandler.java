@@ -38,15 +38,18 @@ public class OpenHandler extends ActionsHandler {
             PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
             OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
-            String res = null;
             if (Double.parseDouble(amount) < 0) { //sell
                 List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
                 for(Position position : positions) {
                     if(position.getSymbol().equals(symbol)) { // Symbol found in the list
                         double existShare = position.getAmount();
-                        if (Math.abs(Double.parseDouble(amount)) > existShare) {
+                        double needShare = Math.abs(Double.parseDouble(amount));
+                        if (needShare > existShare) {
                             return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have enough shares" + "</error>";
                         }
+                        position.setAmount(existShare - needShare);
+                        positionMapper.updatePosition(position);
+                        sqlSession.commit();
                         //open new sell order
                         return openNewOrder(sqlSession, accountMapper, orderMapper);
                     }
@@ -68,7 +71,6 @@ public class OpenHandler extends ActionsHandler {
         }catch (Exception e) {
             e.printStackTrace();
         }
-        //TODO: how to make match order auto
         return null;
     }
 
@@ -78,6 +80,9 @@ public class OpenHandler extends ActionsHandler {
         Order orderOpen = new Order(trans_id, symbol, Double.parseDouble(amount), Double.parseDouble(limit_price), Status.OPEN, account);
         orderMapper.insertOrder(orderOpen);
         sqlSession.commit();
+        ExecuteHandler executeHandler = new ExecuteHandler();
+        executeHandler.addOrder(orderOpen);
+        executeHandler.executeAction();
         return "<opened sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\" id=\"" + trans_id + "\"/>";
     }
 
