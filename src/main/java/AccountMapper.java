@@ -13,6 +13,6 @@ public interface AccountMapper {
 
     void deleteAccount(String accountId);
 
-    List<Account> getAccountByNum(String accountNum);
+    Account getAccountByNum(String accountNum);
 
 }
