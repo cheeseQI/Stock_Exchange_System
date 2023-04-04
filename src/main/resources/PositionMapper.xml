@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PositionMapper">
+
+    <resultMap id="positionResultMap" type="Position">
+        <id property="positionId" column="position_id"/>
+        <result property="amount" column="amount"/>
+        <result property="symbol" column="symbol"/>
+        <association property="account" column="account_id" javaType="Account" resultMap="AccountMapper.accountResultMap"/>
+    </resultMap>
+
+    <select id="getPositionById" resultMap="positionResultMap">
+        SELECT p.position_id, p.amount, p.symbol, a.account_id, a.balance, a.account_num
+        FROM position p
+                 JOIN account a ON p.account_id = a.account_id
+        WHERE p.position_id = #{position_id}
+    </select>
+
+    <select id="getPositionsByAccountId" resultMap="positionResultMap">
+        SELECT position_id, amount, symbol, account_id
+        FROM position
+        WHERE account_id = #{account.accountId}
+    </select>
+
+    <insert id="insertPosition" parameterType="Position">
+        INSERT INTO position (amount, symbol, account_id) VALUES (#{amount}, #{symbol}, #{account.accountId})
+    </insert>
+
+    <update id="updatePosition" parameterType="Position">
+        UPDATE position SET amount = #{amount}, symbol = #{symbol}, account_id = #{account.accountId} WHERE position_id = #{positionId}
+    </update>
+
+    <delete id="deletePositionById">
+        DELETE FROM position WHERE position_id = #{positionId}
+    </delete>
+
+</mapper>

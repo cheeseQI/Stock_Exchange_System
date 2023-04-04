@@ -39,12 +39,16 @@
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/Status.java" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="4511" />
+          <option name="caretOffset" value="267" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/CancelHandler.java" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="5379" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/XMLParser.java" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="1003" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/java/QueryHandler.java" />
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/src/main/resources/PositionMapper.xml" />
         </OpenedFileInfo>
       </list>
     </option>
