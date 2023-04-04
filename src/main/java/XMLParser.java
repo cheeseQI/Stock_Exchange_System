@@ -47,11 +47,14 @@ public class XMLParser {
                         Element accountElem = (Element) childNode;
                         String accountId = accountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
                         String balance = accountElem.getAttribute(XMLConstant.BALANCE_TAG);
-                        System.out.println("Account ID: " + accountId + ", Balance: " + balance);
+                        CreateAccountHandler createAccountHandler = new CreateAccountHandler(accountId, balance);
+                        this.response += createAccountHandler.executeAction();
+                        this.response += "\n";
+                        //System.out.println("Account ID: " + accountId + ", Balance: " + balance);
                     } else if (childNode.getNodeName().equals(XMLConstant.SYM_TAG)) {
                         Element symbolElem = (Element) childNode;
                         String sym = symbolElem.getAttribute(XMLConstant.SYM_ATTRIBUTE);
-                        System.out.println("Symbol: " + sym);
+                        // System.out.println("Symbol: " + sym);
                         NodeList symbolAccountList = symbolElem.getElementsByTagName(XMLConstant.ACCOUNT_TAG);
 
                         for (int j = 0; j < symbolAccountList.getLength(); j++) {
@@ -60,7 +63,10 @@ public class XMLParser {
                                 Element symbolAccountElem = (Element) symbolAccountNode;
                                 String symbolAccountId = symbolAccountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
                                 String num = symbolAccountElem.getTextContent();
-                                System.out.println("Symbol Account ID: " + symbolAccountId + ", NUM: " + num);
+                                CreateSymbolHandler createSymbolHandler = new CreateSymbolHandler(sym, symbolAccountId, num);
+                                this.response += createSymbolHandler.executeAction();
+                                this.response += "\n";
+                                //System.out.println("Symbol Account ID: " + symbolAccountId + ", NUM: " + num);
                             }
                         }
                     }
