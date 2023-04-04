@@ -1,7 +1,6 @@
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,20 +18,26 @@ public abstract class ActionsHandler {
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
         try (SqlSession sqlSession = sqlSessionFactory.openSession()){
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
-            List<Account> res = accountMapper.getAccountByNum(accountNum);
-            return !res.isEmpty();
+            Account res = accountMapper.getAccountByNum(accountNum);
+            return res != null;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    boolean checkPositive(String num) { // check num is positive number
+    public boolean checkPositive(String num) { // check num is positive number
         try {
             double d = Double.parseDouble(num);
             return (d > 0);
         } catch (NumberFormatException nfe) {
             return false;
         }
+    }
+
+    public boolean checkSymbolFormat(String symbol) { //alphanumeric
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9]+$");
+        Matcher matcher = pattern.matcher(symbol);
+        return matcher.matches();
     }
 }

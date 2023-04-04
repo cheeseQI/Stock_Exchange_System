@@ -23,9 +23,11 @@ public class CreateSymbolHandler extends ActionsHandler {
         if (!checkAccountExist(accountNum)) {
             return "<error sym=\"" + symbol + "\" id=\"" + accountNum + "\">" + "Account not exist" + "</error>";
         }
-        //check num is positive
-        if (!checkPositive(amount)) {
+        if (!checkPositive(amount)) { //check num is positive
             return "<error sym=\"" + symbol + "\" id=\"" + accountNum + "\">" + "NUM shares of the symbol must be positive" + "</error>";
+        }
+        if (!checkSymbolFormat(symbol)) {
+            return "<error sym=\"" + symbol + "\" id=\"" + accountNum + "\">" + "Symbol must be alphanumeric characters" + "</error>";
         }
         return updatePostion(symbol, accountNum, amount);
     }
@@ -49,8 +51,8 @@ public class CreateSymbolHandler extends ActionsHandler {
                 }
             }
             if (!found) { //create symbol
-                List<Account> accountList = accountMapper.getAccountByNum(accountNum);
-                Position position = new Position(Double.parseDouble(amount), symbol, accountList.get(0));
+                Account account = accountMapper.getAccountByNum(accountNum);
+                Position position = new Position(Double.parseDouble(amount), symbol, account);
                 positionMapper.insertPosition(position);
                 sqlSession.commit();
             }

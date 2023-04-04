@@ -50,11 +50,9 @@ public class XMLParser {
                         CreateAccountHandler createAccountHandler = new CreateAccountHandler(accountId, balance);
                         this.response += createAccountHandler.executeAction();
                         this.response += "\n";
-                        //System.out.println("Account ID: " + accountId + ", Balance: " + balance);
                     } else if (childNode.getNodeName().equals(XMLConstant.SYM_TAG)) {
                         Element symbolElem = (Element) childNode;
                         String sym = symbolElem.getAttribute(XMLConstant.SYM_ATTRIBUTE);
-                        // System.out.println("Symbol: " + sym);
                         NodeList symbolAccountList = symbolElem.getElementsByTagName(XMLConstant.ACCOUNT_TAG);
 
                         for (int j = 0; j < symbolAccountList.getLength(); j++) {
@@ -92,7 +90,9 @@ public class XMLParser {
                             String sym = childElem.getAttribute("sym");
                             String amount = childElem.getAttribute("amount");
                             String limit = childElem.getAttribute("limit");
-                            System.out.println("Order - Symbol: " + sym + ", Amount: " + amount + ", Limit: " + limit);
+                            OpenHandler openHandler = new OpenHandler(accountNum, sym, amount, limit);
+                            this.response += openHandler.executeAction();
+                            this.response += "\n";
                             break;
                         case "query":
                             String queryTransId = childElem.getAttribute("id");
