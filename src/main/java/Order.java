@@ -1,4 +1,6 @@
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Set;
 
 public class Order {
@@ -83,6 +85,12 @@ public class Order {
 
     public long getTime() {
         return this.time;
+    }
+
+    public String getFormalTime() {
+        Date date = new Date(this.time * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
     }
 
     public void setTime() {

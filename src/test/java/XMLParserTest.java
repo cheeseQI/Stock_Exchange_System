@@ -52,6 +52,7 @@ public class XMLParserTest {
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
     }
+
     @Test
     public void testParseQueryFunctionInvalidId() throws IOException, SAXException, ParserConfigurationException {
         String xml = "<transactions id=\"132\">\n" +
@@ -63,10 +64,20 @@ public class XMLParserTest {
     @Test
     public void testParseCancelFunction() throws IOException, SAXException, ParserConfigurationException {
         String xml = "<transactions id=\"132\">\n" +
-                " <cancel id=\"0\"/> \n" +
+                " <cancel id=\"1\"/> \n" +
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
     }
 
+    @Test
+    public void testBuildXMLReply() throws IOException, ParserConfigurationException, SAXException {
+        String xml = "<transactions id=\"132\">\n" +
+                " <query id=\"1\"/> \n" +
+                " <cancel id=\"1\"/>\n" +
+                "</transactions>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
+    }
 }

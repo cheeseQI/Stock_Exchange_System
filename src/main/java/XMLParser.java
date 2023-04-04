@@ -73,8 +73,8 @@ public class XMLParser {
 
     public void parseTransactionsXML(Element transElement) {
         try {
-            String accountId = transElement.getAttribute(XMLConstant.ID_ATTRIBUTE);
-            System.out.println("Account ID: " + accountId);
+            String accountNum = transElement.getAttribute(XMLConstant.ID_ATTRIBUTE);
+            System.out.println("Account ID: " + accountNum);
             NodeList children = transElement.getChildNodes();
 
             for (int i = 0; i < children.getLength(); i++) {
@@ -91,13 +91,21 @@ public class XMLParser {
                         case "query":
                             String queryTransId = childElem.getAttribute("id");
                             System.out.println("Query - Transaction ID: " + queryTransId);
-                            QueryHandler queryHandler = new QueryHandler(Long.parseLong(queryTransId), Integer.parseInt(accountId));
+                            if (!MyUtil.isNumeric(queryTransId)) {
+                                response += "<error id=\"" + queryTransId + "\">" + "invalid transaction id" + "</error>\n";
+                                break;
+                            }
+                            QueryHandler queryHandler = new QueryHandler(Long.parseLong(queryTransId), accountNum);
                             response += queryHandler.executeAction();
                             break;
                         case "cancel":
                             String cancelTransId = childElem.getAttribute("id");
                             System.out.println("Cancel - Transaction ID: " + cancelTransId);
-                            CancelHandler cancelHandler = new CancelHandler(Long.parseLong(cancelTransId), Integer.parseInt(accountId));
+                            if (!MyUtil.isNumeric(cancelTransId)) {
+                                response += "<error id=\"" + cancelTransId + "\">" + "invalid transaction id" + "</error>\n";
+                                break;
+                            }
+                            CancelHandler cancelHandler = new CancelHandler(Long.parseLong(cancelTransId), accountNum);
                             response += cancelHandler.executeAction();
                             break;
                         default:
@@ -110,11 +118,9 @@ public class XMLParser {
         }
     }
 
-    public void buildCreateXMLReply() {
+    public String buildXMLReply() {
         // send the response to client
+        return response;
     }
 
-    public void buildTransXMLReply() {
-
-    }
 }

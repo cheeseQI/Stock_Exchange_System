@@ -5,9 +5,9 @@ import java.util.List;
 
 public class QueryHandler extends ActionsHandler {
     private long transactionId;
-    private int accountNum;
+    private String accountNum;
 
-    public QueryHandler(long transactionId, int accountNum) {
+    public QueryHandler(long transactionId, String accountNum) {
         this.transactionId = transactionId;
         this.accountNum = accountNum;
     }
@@ -26,16 +26,20 @@ public class QueryHandler extends ActionsHandler {
                 return res;
             }
             for (Order order: orderList) {
+                if (!order.getAccount().getAccountNum().equals(accountNum)) {
+                    res += "<error id=\"" + transactionId + "\">" + "you have no permission to query order does not belong to you" + "</error>\n";
+                    continue;
+                }
                 switch (order.getStatus()) {
                     case OPEN:
                         res += "<open shares=\"" + order.getAmount() + "\">\n";
                         break;
                     case EXECUTED:
                         // todo: please change the limit price -> real price after execute!
-                        res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getTime() + "\">\n";
+                        res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getFormalTime() + "\">\n";
                         break;
                     case CANCELED:
-                        res += "<canceled shares=\"" + order.getAmount() + "\" time=\"" + order.getTime() + "\">\n";
+                        res += "<canceled shares=\"" + order.getAmount() + "\" time=\"" + order.getFormalTime() + "\">\n";
                         break;
                     default:
                         break;
@@ -50,7 +54,7 @@ public class QueryHandler extends ActionsHandler {
         return null;
     }
 
-    public int getAccountNum() {
+    public String getAccountNum() {
         return accountNum;
     }
 
