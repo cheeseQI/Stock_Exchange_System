@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ExecuteHandler extends ActionsHandler {
-    private ArrayList<Order> buyOrders;
-    private ArrayList<Order> sellOrders;
+    private static ArrayList<Order> buyOrders;
+    private static ArrayList<Order> sellOrders;
 
     public ExecuteHandler() {
         buyOrders = new ArrayList<>();
@@ -63,10 +63,8 @@ public class ExecuteHandler extends ActionsHandler {
         else {
             //split order
             // todo: 占位符transid，后面需要自己填
-            Order orderOpen = new Order(-1, order.getSymbol(), order.getAmount() - machtedAmount, order.getLimit_price(), order.getAccount());
-            orderOpen.setStatus(Status.OPEN);
-            Order orderExecuted = new Order(-1, order.getSymbol(), machtedAmount, order.getLimit_price(), order.getAccount());
-            orderExecuted.setStatus(Status.EXECUTED);
+            Order orderOpen = new Order(-1, order.getSymbol(), order.getAmount() - machtedAmount, order.getLimit_price(), Status.OPEN, order.getAccount());
+            Order orderExecuted = new Order(-1, order.getSymbol(), machtedAmount, order.getLimit_price(), Status.EXECUTED, order.getAccount());
             orders.set(0, orderOpen); // Replace the original order with the split order
             // TODO: delete the origin order from database
 

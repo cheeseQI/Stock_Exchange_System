@@ -75,7 +75,7 @@ public class OpenHandler extends ActionsHandler {
     private String openNewOrder(SqlSession sqlSession, AccountMapper accountMapper, OrderMapper orderMapper) {
         long trans_id = Counter.incrementAndGet();
         Account account = accountMapper.getAccountByNum(accountNum);
-        Order orderOpen = new Order(trans_id, symbol, Double.parseDouble(amount), Double.parseDouble(limit_price), account);
+        Order orderOpen = new Order(trans_id, symbol, Double.parseDouble(amount), Double.parseDouble(limit_price), Status.OPEN, account);
         orderMapper.insertOrder(orderOpen);
         sqlSession.commit();
         return "<opened sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\" id=\"" + trans_id + "\"/>";

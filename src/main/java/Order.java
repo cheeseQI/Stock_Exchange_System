@@ -1,7 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Set;
 
 public class Order {
     private int id;
@@ -20,16 +19,6 @@ public class Order {
         this.amount = amount;
         this.limit_price = limit_price;
         this.status = status;
-        this.account = account;
-        Instant instant = Instant.now();
-        this.time = instant.getEpochSecond();
-    }
-
-    public Order(long transId, String symbol, double amount, double limit_price, Account account) {
-        this.transId = transId;
-        this.symbol = symbol;
-        this.amount = amount;
-        this.limit_price = limit_price;
         this.account = account;
         Instant instant = Instant.now();
         this.time = instant.getEpochSecond();
