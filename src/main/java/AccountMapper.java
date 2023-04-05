@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface AccountMapper {
 
-    Account getAccountById(String accountId);
+    Account getAccountById(int accountId);
 
     void insertAccount(Account account);
 

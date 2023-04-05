@@ -20,11 +20,16 @@
     <select id="findOrderById" resultMap="OrderResultMap" parameterType="int">
         SELECT * FROM order_table WHERE id = #{id}
     </select>
+
     <select id="findOrderByTransId" resultMap="OrderResultMap" parameterType="long">
         SELECT o.id, o.symbol, o.amount, o.limit_price, o.status, o.time, o.trans_id, a.account_id, a.balance, a.account_num
         FROM order_table o
                  JOIN account a ON o.account_id = a.account_id
         WHERE o.trans_id = #{transId}
+    </select>
+
+    <select id="findOrderBySymbolAndStatus" resultMap="OrderResultMap">
+        SELECT * FROM order_table WHERE symbol = #{symbol} AND status = #{status}
     </select>
 
     <update id="updateOrder" parameterType="Order">
