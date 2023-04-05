@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -98,13 +97,14 @@ public class ExecuteHandler extends ActionsHandler {
                 orderMapper.deleteOrder(order.getId());
                 orderMapper.insertOrder(orderExecuted);
                 orderMapper.insertOrder(orderOpen);
+                List<Order> orderOpens = orderMapper.findOrderByTransId(orderOpen.getTransId()); //to get the orderOpen's id
                 sqlSession.commit();
-
-                //delete ArrayList first
-                buyOrders.clear();
-                sellOrders.clear();
-                addOrder(orderOpen);
-                //TODO orders.set(0, orderOpen); // Replace the original order with the split order
+                for (Order order1 : orderOpens) {
+                    if (order1.getStatus().equals(Status.OPEN)) {
+                        orders.set(0, order1); // Replace the original order with the split order
+                        break;
+                    }
+                }
             }
         }catch (Exception e) {
             e.printStackTrace();
