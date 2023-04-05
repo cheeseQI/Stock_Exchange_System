@@ -36,7 +36,7 @@ public class MatchingEngine {
                 xmlParser.parseXML();
 
                 // Process the XML data and generate a response
-                String xmlResponse = "<response><status>success</status></response>";
+                String xmlResponse = xmlParser.buildXMLReply();
                 // Send the XML response to the client
                 OutputStream outputStream = socket.getOutputStream();
                 PrintWriter writer = new PrintWriter(outputStream, true);

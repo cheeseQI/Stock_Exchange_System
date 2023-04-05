@@ -80,4 +80,53 @@ public class XMLParserTest {
         xmlParser.parseXML();
         System.out.println(xmlParser.buildXMLReply());
     }
+
+    @Test
+    public void testParseCreateFunction() throws IOException, ParserConfigurationException, SAXException {
+        String xml = "<create>\n" +
+                "<account id=\"777\" balance=\"100\"/>\n" +
+                "</create>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
+    }
+
+    @Test
+    public void testParseCreateSymFunction() throws IOException, ParserConfigurationException, SAXException {
+        String xml = "<create>\n" +
+                "<symbol sym=\"BIT\"> \n" +
+                "<account id=\"777\">10</account>\n" +
+                "</symbol>" +
+                "</create>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
+    }
+
+    @Test
+    public void testParseCreateWithSymFunction() throws IOException, ParserConfigurationException, SAXException {
+        String xml = "<create>\n" +
+                "<account id=\"888\" balance=\"100\"/>\n" +
+                "<account id=\"999\" balance=\"100\"/>\n" +
+                "<symbol sym=\"BIT\"> \n" +
+                "<account id=\"777\">10</account>\n" +
+                "</symbol>" +
+                "<symbol sym=\"BTC\"> \n" +
+                "<account id=\"888\">100</account>\n" +
+                "</symbol>" +
+                "</create>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
+    }
+
+    @Test
+    public void testParseOpenFunction() throws IOException, ParserConfigurationException, SAXException {
+        String xml = "<transactions id=\"777\">\n" +
+                "<order sym=\"BIT\" amount=\"-5\" limit=\"1\"/> \n" +
+                "</transactions>";
+        XMLParser xmlParser = new XMLParser(xml);
+        xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
+    }
 }

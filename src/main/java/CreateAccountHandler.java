@@ -30,7 +30,7 @@ public class CreateAccountHandler extends ActionsHandler {
             return "<error id=\"" + accountNum + "\">" + "Invalid balance format" + "</error>";
         }
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()){
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
             // create new account
             Account account = new Account(Double.parseDouble(balance), accountNum);

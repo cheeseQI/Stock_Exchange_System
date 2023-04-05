@@ -9,10 +9,10 @@ import java.util.List;
 public class App {
 
     public static void main(String[] args) {
-//        MatchingEngine matchingEngine = new MatchingEngine();
-//        matchingEngine.start();
-        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        MatchingEngine matchingEngine = new MatchingEngine();
+        matchingEngine.start();
+//        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
+//        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
 //            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
 //            PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
 //            List<Position> plist = positionMapper.getPositionsByAccountNum("132");
@@ -70,9 +70,9 @@ public class App {
 //            orderMapper.deleteOrder(3);
 //            sqlSession.commit();
 //            System.out.println("Delete successful");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
 }

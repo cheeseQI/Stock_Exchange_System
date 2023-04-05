@@ -1,0 +1,5 @@
+<transactions id="2">
+ <order sym="JPN" amount="50" limit="12"/>
+ <order sym="SPY" amount="-60" limit="4"/>
+ <order sym="CNY" amount="10" limit="40"/>
+</transactions>

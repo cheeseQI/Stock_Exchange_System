@@ -34,6 +34,13 @@ public class ExecuteHandler extends ActionsHandler {
 
     @Override
     public String executeAction() { //match orders
+        for (Order order: buyOrders) {
+            System.out.println(order.getSymbol() + " " + order.getAmount());
+        }
+        System.out.println("sells: ");
+        for (Order order: sellOrders) {
+            System.out.println(order.getSymbol() + " " + order.getAmount());
+        }
         while (!buyOrders.isEmpty() && !sellOrders.isEmpty()) {
             Order buyOrder = buyOrders.get(0);
             Order sellOrder = sellOrders.get(0);
