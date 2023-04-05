@@ -25,9 +25,9 @@ public class XMLParser {
         Element rootElement = doc.getDocumentElement();
         doc.getDocumentElement().normalize();
         String rootEle = rootElement.getNodeName();
-        if (rootEle.equals(XMLConstant.CREATE_TAG)) {
+        if (rootEle.equals(SystemConstant.CREATE_TAG)) {
             parseCreateXML(rootElement);
-        } else if (rootEle.equals(XMLConstant.TRANS_TAG)) {
+        } else if (rootEle.equals(SystemConstant.TRANS_TAG)) {
             parseTransactionsXML(rootElement);
         } else {
             throw new IllegalArgumentException("invalid xml format"); // todo: change to xml indicate error
@@ -43,23 +43,23 @@ public class XMLParser {
                 Node childNode = childNodes.item(i);
 
                 if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                    if (childNode.getNodeName().equals(XMLConstant.ACCOUNT_TAG) && childNode.getParentNode().getNodeName().equals(XMLConstant.CREATE_TAG)) {
+                    if (childNode.getNodeName().equals(SystemConstant.ACCOUNT_TAG) && childNode.getParentNode().getNodeName().equals(SystemConstant.CREATE_TAG)) {
                         Element accountElem = (Element) childNode;
-                        String accountId = accountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
-                        String balance = accountElem.getAttribute(XMLConstant.BALANCE_TAG);
+                        String accountId = accountElem.getAttribute(SystemConstant.ID_ATTRIBUTE);
+                        String balance = accountElem.getAttribute(SystemConstant.BALANCE_TAG);
                         CreateAccountHandler createAccountHandler = new CreateAccountHandler(accountId, balance);
                         this.response += createAccountHandler.executeAction();
                         this.response += "\n";
-                    } else if (childNode.getNodeName().equals(XMLConstant.SYM_TAG)) {
+                    } else if (childNode.getNodeName().equals(SystemConstant.SYM_TAG)) {
                         Element symbolElem = (Element) childNode;
-                        String sym = symbolElem.getAttribute(XMLConstant.SYM_ATTRIBUTE);
-                        NodeList symbolAccountList = symbolElem.getElementsByTagName(XMLConstant.ACCOUNT_TAG);
+                        String sym = symbolElem.getAttribute(SystemConstant.SYM_ATTRIBUTE);
+                        NodeList symbolAccountList = symbolElem.getElementsByTagName(SystemConstant.ACCOUNT_TAG);
 
                         for (int j = 0; j < symbolAccountList.getLength(); j++) {
                             Node symbolAccountNode = symbolAccountList.item(j);
                             if (symbolAccountNode.getNodeType() == Node.ELEMENT_NODE) {
                                 Element symbolAccountElem = (Element) symbolAccountNode;
-                                String symbolAccountId = symbolAccountElem.getAttribute(XMLConstant.ID_ATTRIBUTE);
+                                String symbolAccountId = symbolAccountElem.getAttribute(SystemConstant.ID_ATTRIBUTE);
                                 String num = symbolAccountElem.getTextContent();
                                 CreateSymbolHandler createSymbolHandler = new CreateSymbolHandler(sym, symbolAccountId, num);
                                 this.response += createSymbolHandler.executeAction();
@@ -77,7 +77,7 @@ public class XMLParser {
 
     public void parseTransactionsXML(Element transElement) {
         try {
-            String accountNum = transElement.getAttribute(XMLConstant.ID_ATTRIBUTE);
+            String accountNum = transElement.getAttribute(SystemConstant.ID_ATTRIBUTE);
             System.out.println("Account ID: " + accountNum);
             NodeList children = transElement.getChildNodes();
 

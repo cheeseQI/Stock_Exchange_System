@@ -1,4 +1,4 @@
-public class XMLConstant {
+public class SystemConstant {
     public static final String CREATE_TAG = "create";
 
     public static final String TRANS_TAG = "transactions";
@@ -12,4 +12,6 @@ public class XMLConstant {
     public static final String ID_ATTRIBUTE = "id";
 
     public static final String SYM_ATTRIBUTE = "sym";
+
+    public static final int MAX_RETRY = 20;
 }

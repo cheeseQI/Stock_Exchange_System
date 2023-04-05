@@ -7,7 +7,7 @@ public interface OrderMapper {
 
     List<Order> findOrderByTransId(long transId);
 
-    void updateOrder(Order order);
+    int updateOrder(Order order, Status status);
 
     void deleteOrder(int id);
 }

@@ -77,7 +77,7 @@ public class ExecuteHandler extends ActionsHandler {
                 order.setLimit_price(matchPrice);
                 order.setStatus(Status.EXECUTED);
                 order.setTime();
-                orderMapper.updateOrder(order);
+                orderMapper.updateOrder(order, Status.OPEN);
                 sqlSession.commit();
                 updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
                 orders.remove(0);

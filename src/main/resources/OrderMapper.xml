@@ -30,7 +30,7 @@
     <update id="updateOrder" parameterType="Order">
         UPDATE order_table
         SET symbol = #{symbol}, amount = #{amount}, limit_price = #{limit_price}, account_id = #{account.accountId}, status = #{status}, time = #{time}, trans_id= #{transId}
-        WHERE id = #{id}
+        WHERE id = #{id} AND status = #{status}
     </update>
 
     <delete id="deleteOrder" parameterType="int">
