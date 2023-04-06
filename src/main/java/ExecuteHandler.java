@@ -45,7 +45,7 @@ public class ExecuteHandler extends ActionsHandler {
             Order buyOrder = buyOrders.get(0);
             Order sellOrder = sellOrders.get(0);
 
-            if (buyOrder.getLimit_price() >= sellOrder.getLimit_price()) {
+            if (buyOrder.getLimit_price() >= sellOrder.getLimit_price()) { //match
                 double sellAmount = Math.abs(sellOrder.getAmount());
                 double matchedAmount = Math.min(buyOrder.getAmount(), sellAmount);
                 buyOrder.setAmount(buyOrder.getAmount() - matchedAmount);
@@ -119,8 +119,13 @@ public class ExecuteHandler extends ActionsHandler {
             accountMapper.updateAccount(sellAccount);
             sqlSession.commit();
         }
-        else { //update position
+        else { //update position (and refund balance to account)
             Account buyAccount = accountMapper.getAccountById(order.getAccount().getAccountId());
+            if (matchPrice != order.getLimit_price()) {
+                buyAccount.setBalance(buyAccount.getBalance() + matchedAmount * (order.getLimit_price() - matchPrice));
+                accountMapper.updateAccount(buyAccount);
+                sqlSession.commit();
+            }
             updatePositionInfo(order.getSymbol(), buyAccount.getAccountNum(), matchedAmount, sqlSession, accountMapper, positionMapper);
         }
     }
