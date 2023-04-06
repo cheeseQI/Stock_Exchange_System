@@ -29,37 +29,23 @@ public class CreateSymbolHandler extends ActionsHandler {
         if (!checkSymbolFormat(symbol)) {
             return "<error sym=\"" + symbol + "\" id=\"" + accountNum + "\">" + "Symbol must be alphanumeric characters" + "</error>";
         }
-        return updatePostion(symbol, accountNum, amount);
+        return updatePosition(symbol, accountNum, amount);
     }
 
-    private String updatePostion(String symbol, String accountNum, String amount) {
+    private String updatePosition(String symbol, String accountNum, String amount) {
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
         try (SqlSession sqlSession = sqlSessionFactory.openSession()){
             PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
             List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
-            // find if symbol in list
-            boolean found = false;
-            for(Position position : positions) {
-                if(position.getSymbol().equals(symbol)) { // Symbol found in the list
-                    found = true;
-                    double newShare = position.getAmount() + Double.parseDouble(amount);
-                    position.setAmount(newShare);
-                    positionMapper.updatePosition(position);
-                    sqlSession.commit();
-                    break;
-                }
-            }
-            if (!found) { //create symbol
-                Account account = accountMapper.getAccountByNum(accountNum);
-                Position position = new Position(Double.parseDouble(amount), symbol, account);
-                positionMapper.insertPosition(position);
-                sqlSession.commit();
-            }
+            Account account = accountMapper.getAccountByNum(accountNum);
+            Position position = new Position(Double.parseDouble(amount), symbol, account);
+            positionMapper.insertOrUpdatePosition(position);
+            sqlSession.commit();
             return "<created sym=\"" + symbol + "\" id=\"" + accountNum + "\"/>";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return "<error id=\"" + accountNum + "\">" + "cannot open sql session" + "</error>";
     }
 }

@@ -45,6 +45,7 @@ public class MatchingEngine {
                 reader.close();
                 writer.close();
                 socket.close();
+                System.out.println("send successfully");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParserConfigurationException e) {

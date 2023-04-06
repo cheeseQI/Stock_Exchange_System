@@ -81,7 +81,6 @@ public class CancelHandler extends ActionsHandler {
                             res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getFormalTime() + "\">\n";
                         }
                     }
-                    //sqlSession.commit();
                     success = true;
                 } catch (Exception e) {
                     sqlSession.rollback();

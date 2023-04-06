@@ -23,6 +23,7 @@ public class XMLParserTest {
                 "</create>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -42,6 +43,7 @@ public class XMLParserTest {
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
+        System.out.println(xmlParser.buildXMLReply());
     }
 
     @Test

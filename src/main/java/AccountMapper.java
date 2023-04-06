@@ -4,10 +4,12 @@ import org.checkerframework.checker.units.qual.A;
 import java.util.List;
 
 public interface AccountMapper {
+    @Delete("DELETE FROM account")
+    void deleteAll();
 
     Account getAccountById(int accountId);
 
-    void insertAccount(Account account);
+    int insertAccount(Account account);
 
     int updateAccount(Account account);
 

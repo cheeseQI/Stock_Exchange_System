@@ -1,4 +1,5 @@
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
@@ -13,6 +14,7 @@ public class MyBatisUtil {
             String resource = "mybatis-config.xml";
             Reader reader = Resources.getResourceAsReader(resource);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+            //sqlSession = sqlSessionFactory.openSession();
         } catch (IOException e) {
             throw new RuntimeException("Error initializing SqlSessionFactory", e);
         }
@@ -20,5 +22,9 @@ public class MyBatisUtil {
 
     public static SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;
+    }
+
+    public static SqlSession getSqlSession() {
+        return sqlSessionFactory.openSession();
     }
 }

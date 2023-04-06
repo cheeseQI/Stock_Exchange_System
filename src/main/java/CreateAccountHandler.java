@@ -34,12 +34,17 @@ public class CreateAccountHandler extends ActionsHandler {
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
             // create new account
             Account account = new Account(Double.parseDouble(balance), accountNum);
-            accountMapper.insertAccount(account);
+            try {
+                accountMapper.insertAccount(account);
+            } catch (Exception e) {
+                sqlSession.rollback();
+                return  "<error id=\"" + accountNum + "\">" + "Account already exists" + "</error>";
+            }
             sqlSession.commit();
             return "<created id=\"" + accountNum + "\"/>";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return "<error id=\"" + accountNum + "\">" + "cannot open sql session" + "</error>";
     }
 }

@@ -1,8 +1,12 @@
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface OrderMapper {
+    @Delete("DELETE FROM order_table")
+    void deleteAll();
+
     void insertOrder(Order order);
 
     Order findOrderById(int id);

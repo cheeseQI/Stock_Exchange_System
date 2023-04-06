@@ -28,11 +28,23 @@
                  JOIN account a ON p.account_id = a.account_id
         WHERE a.account_num = #{accountNum}
     </select>
+    <select id="getPositionByAccountNumForUpdate" resultMap="positionResultMap" parameterType="String">
+        SELECT p.position_id, p.amount, p.symbol, p.version, a.account_id, a.balance, a.account_num
+        FROM position p
+                 JOIN account a ON p.account_id = a.account_id
+        WHERE a.account_num = #{accountNum} FOR UPDATE
+    </select>
 
     <insert id="insertPosition" parameterType="Position">
         INSERT INTO position (amount, symbol, account_id) VALUES (#{amount}, #{symbol}, #{account.accountId})
     </insert>
-
+    <insert id="insertOrUpdatePosition" parameterType="Position">
+        INSERT INTO position (amount, symbol, account_id)
+        VALUES (#{amount}, #{symbol}, #{account.accountId})
+            ON CONFLICT (account_id, symbol) DO UPDATE SET
+            amount = position.amount + EXCLUDED.amount
+                                                WHERE position.symbol = #{symbol};
+    </insert>
     <update id="updatePosition" parameterType="Position">
         UPDATE position SET amount = #{amount}, symbol = #{symbol}, account_id = #{account.accountId}, version = #{version} + 1 WHERE position_id = #{positionId} AND version=#{version}
     </update>
