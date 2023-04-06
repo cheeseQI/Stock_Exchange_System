@@ -17,7 +17,7 @@ public class Client implements Runnable {
     }
 
     public static void main(String[] args) {
-        String xmlFilePath = "src/test/resources/test5.txt";
+        String xmlFilePath = "src/test/resources/load_test1.txt";
         int numberOfClients = 10;
         for (int i = 0; i < numberOfClients; i++) {
             Client client = new Client(xmlFilePath);
@@ -36,13 +36,10 @@ public class Client implements Runnable {
 
             byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
             int xmlLength = xmlBytes.length;
-
+            long startTime = System.currentTimeMillis();
             OutputStream outputStream = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(outputStream, true);
-            // 发送XML长度
             writer.println(xmlLength);
-
-            // 发送XML数据
             outputStream.write(xmlBytes);
             outputStream.flush();
             System.out.println("send successfully");
@@ -55,6 +52,9 @@ public class Client implements Runnable {
                 response.append(System.lineSeparator());
             }
             //String response = reader.readLine();
+            long endTime = System.currentTimeMillis();
+            long elapsedTime = endTime - startTime;
+                        System.out.println("Elapsed time: " + elapsedTime + " milliseconds");
             System.out.println("Response from the server: " + response.toString());
             socket.close();
         } catch (IOException e) {

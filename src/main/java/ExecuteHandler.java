@@ -1,6 +1,7 @@
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ExecuteHandler extends ActionsHandler {
 
     public void addOrder(Order order) {
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()){
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
             List<Order> orders = orderMapper.findOrderBySymbolAndStatus(order.getSymbol(), Status.OPEN);
             System.out.println(orders.size());
@@ -24,7 +25,7 @@ public class ExecuteHandler extends ActionsHandler {
             for (Order ord : orders) {
                 insertToList(ord);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -41,47 +42,47 @@ public class ExecuteHandler extends ActionsHandler {
 
     @Override
     public String executeAction() { //match orders
-        while (!buyOrders.isEmpty() && !sellOrders.isEmpty()) {
-            Order buyOrder = buyOrders.get(0);
-            Order sellOrder = sellOrders.get(0);
-
-            if (buyOrder.getLimit_price() >= sellOrder.getLimit_price()) { //match
-                double sellAmount = Math.abs(sellOrder.getAmount());
-                double matchedAmount = Math.min(buyOrder.getAmount(), sellAmount);
-                buyOrder.setAmount(buyOrder.getAmount() - matchedAmount);
-                double matchPrice;
-                if (buyOrder.getTransId() > sellOrder.getTransId()) {
-                    matchPrice = sellOrder.getLimit_price();
-                }
-                else {
-                    matchPrice = buyOrder.getLimit_price();
-                }
-
-                SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
-                try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-                    int retries = 0;
-                    boolean success = false;
-                    while (!success && retries < SystemConstant.MAX_RETRY) {
-                        try {
+        int retries = 0;
+        boolean success = false;
+        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(false)) {
+            Connection connection = sqlSession.getConnection();
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            while (!success && retries < SystemConstant.MAX_RETRY) {
+                try {
+                    while (!buyOrders.isEmpty() && !sellOrders.isEmpty()) {
+                        Order buyOrder = buyOrders.get(0);
+                        Order sellOrder = sellOrders.get(0);
+                        if (buyOrder.getLimit_price() >= sellOrder.getLimit_price()) { //match
+                            double sellAmount = Math.abs(sellOrder.getAmount());
+                            double matchedAmount = Math.min(buyOrder.getAmount(), sellAmount);
+                            buyOrder.setAmount(buyOrder.getAmount() - matchedAmount);
+                            double matchPrice;
+                            if (buyOrder.getTransId() > sellOrder.getTransId()) {
+                                matchPrice = sellOrder.getLimit_price();
+                            } else {
+                                matchPrice = buyOrder.getLimit_price();
+                            }
                             orderInfoUpdate(sqlSession, buyOrder, matchedAmount, buyOrders, matchPrice, false);
                             sellOrder.setAmount(sellOrder.getAmount() + matchedAmount);
                             orderInfoUpdate(sqlSession, sellOrder, matchedAmount, sellOrders, matchPrice, true);
                             success = true;
-                        } catch (Exception e) {
-                            sqlSession.rollback();
-                            retries++;
+                        } else {
+                            break;
                         }
                     }
-                    if (!success) {
-                        return null; // todo: any action for exceed limit
-                    }
-                    sqlSession.commit();
+                    success = true;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    sqlSession.rollback();
+                    retries++;
                 }
-            } else {
-                break;
             }
+            if (!success) {
+                return null; // todo: any action for exceed limit for match failed
+            }
+            sqlSession.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -103,7 +104,7 @@ public class ExecuteHandler extends ActionsHandler {
             updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
             orders.remove(0);
         }
-        else {//split order
+        else { //split order
             Order orderOpen = new Order(order.getTransId(), order.getSymbol(), order.getAmount(), order.getLimit_price(), Status.OPEN, order.getAccount());
             Order orderExecuted;// Replace the original order with the split order
             if (sell) {
@@ -113,12 +114,11 @@ public class ExecuteHandler extends ActionsHandler {
                 orderExecuted = new Order(order.getTransId(), order.getSymbol(), matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
             }
             updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
-
             orderMapper.deleteOrder(order.getId());
             orderMapper.insertOrder(orderExecuted);
+            //orderMapper.updateOrder(orderExecuted);
             orderMapper.insertOrder(orderOpen);
             List<Order> orderOpens = orderMapper.findOrderByTransId(orderOpen.getTransId()); //to get the orderOpen's id
-            //sqlSession.commit();
             for (Order order1 : orderOpens) {
                 if (order1.getStatus().equals(Status.OPEN)) {
                     orders.set(0, order1); // Replace the original order with the split order
@@ -143,7 +143,10 @@ public class ExecuteHandler extends ActionsHandler {
             Account buyAccount = accountMapper.getAccountById(order.getAccount().getAccountId());
             if (matchPrice != order.getLimit_price()) {
                 buyAccount.setBalance(buyAccount.getBalance() + matchedAmount * (order.getLimit_price() - matchPrice));
-                accountMapper.updateAccount(buyAccount);
+                int result = accountMapper.updateAccount(buyAccount);
+                if (result == 0) {
+                    throw new RuntimeException("Update account failed due to concurrency conflict");
+                }
                 //sqlSession.commit();
             }
             updatePositionInfo(order.getSymbol(), buyAccount.getAccountNum(), matchedAmount, sqlSession, accountMapper, positionMapper);
@@ -152,26 +155,8 @@ public class ExecuteHandler extends ActionsHandler {
 
     private void updatePositionInfo(String symbol, String accountNum, double matchedAmount, SqlSession sqlSession, AccountMapper accountMapper, PositionMapper positionMapper) {
         List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
-        // find if symbol in list
-        boolean found = false;
-        for(Position position : positions) {
-            if(position.getSymbol().equals(symbol)) { // Symbol found in the list
-                found = true;
-                double newShare = position.getAmount() + matchedAmount;
-                position.setAmount(newShare);
-                int result = positionMapper.updatePosition(position);
-                if (result == 0) {
-                    throw new RuntimeException("Update position failed due to concurrency conflict");
-                }
-                //sqlSession.commit();
-                break;
-            }
-        }
-        if (!found) { //create symbol
-            Account account = accountMapper.getAccountByNum(accountNum);
-            Position position = new Position(matchedAmount, symbol, account);
-            positionMapper.insertPosition(position);
-            //sqlSession.commit();
-        }
+        Account account = accountMapper.getAccountByNum(accountNum);
+        Position position = new Position(matchedAmount, symbol, account);
+        positionMapper.insertOrUpdatePosition(position);
     }
 }

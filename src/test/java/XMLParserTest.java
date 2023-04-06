@@ -66,8 +66,8 @@ public class XMLParserTest {
 
     @Test
     public void testParseCancelFunction() throws IOException, SAXException, ParserConfigurationException {
-        String xml = "<transactions id=\"777\">\n" +
-                " <cancel id=\"1\"/> \n" +
+        String xml = "<transactions id=\"2\">\n" +
+                " <cancel id=\"5\"/> \n" +
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();

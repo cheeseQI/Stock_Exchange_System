@@ -75,10 +75,10 @@ public class CancelHandler extends ActionsHandler {
                                     //System.out.println("add new " + posToBeReAdd.getSymbol() + " to " + posToBeReAdd.getAmount());
                                 }
                             }
-                            res += "<canceled shares=\"" + order.getAmount() + "\" time=\"" + order.getFormalTime() + "\">\n";
+                            res += "<canceled shares=\"" + order.getAmount() + "\" time=\"" + order.getTime() + "\">\n";
                             sqlSession.commit();
                         } else if (order.getStatus() == Status.EXECUTED) {
-                            res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getFormalTime() + "\">\n";
+                            res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getTime() + "\">\n";
                         }
                     }
                     success = true;

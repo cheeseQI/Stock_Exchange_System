@@ -54,7 +54,7 @@ public class OpenHandler extends ActionsHandler {
                                 position.setAmount(existShare - needShare);
                                 int result = positionMapper.updatePosition(position);
                                 if (result == 0) {
-                                    System.out.println("position version " + position.getVersion());
+                                    //System.out.println("position version " + position.getVersion());
                                     throw new RuntimeException("Update position failed due to concurrency conflict");
                                 }
                                 //sqlSession.commit();
