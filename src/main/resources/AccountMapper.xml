@@ -5,6 +5,7 @@
         <id column="account_id" property="accountId"/>
         <result column="balance" property="balance"/>
         <result column="account_num" property="accountNum"/>
+        <result column="version" property="version"/>
     </resultMap>
 
     <select id="getAccountById" resultMap="accountResultMap">
@@ -20,8 +21,8 @@
     </insert>
 
     <update id="updateAccount">
-        UPDATE account SET balance = #{balance}, account_num = #{accountNum}
-        WHERE account_id = #{accountId}
+        UPDATE account SET balance = #{balance}, account_num = #{accountNum}, version = #{version} + 1
+        WHERE account_id = #{accountId} AND version = #{version}
     </update>
 
     <delete id="deleteAccount">

@@ -34,18 +34,19 @@ public class CancelHandler extends ActionsHandler {
                         if (order.getStatus() == Status.OPEN) {
                             order.setStatus(Status.CANCELED);
                             order.setTime();
-                            int result = orderMapper.updateOrder(order, Status.OPEN);
+                            int result = orderMapper.updateOrder(order);
                             if (result == 0) {
-                                throw new RuntimeException("Update balance failed due to concurrency conflict");
+                                //System.out.println(order.getVersion() + " is the version");
+                                throw new RuntimeException("Update order failed due to concurrency conflict");
                             }
                             //  add to old position || new position
                             double price = order.getLimit_price();
                             if (price < 0) {
                                 Account accountToBeRefund = order.getAccount();
-                                System.out.println(order.getSymbol() + " account num: " + accountToBeRefund.getAccountNum() + " balance" + accountToBeRefund.getBalance()
-                                        + "price " + price + "amount: " + order.getAmount());
+//                                System.out.println(order.getSymbol() + " account num: " + accountToBeRefund.getAccountNum() + " balance" + accountToBeRefund.getBalance()
+//                                        + "price " + price + "amount: " + order.getAmount());
                                 accountToBeRefund.setBalance(accountToBeRefund.getBalance() + price * order.getAmount());
-                                System.out.println("new balance: " + accountToBeRefund.getBalance());
+                                //System.out.println("new balance: " + accountToBeRefund.getBalance());
                                 accountMapper.updateAccount(accountToBeRefund);
                             } else {
                                 List<Position> positionList = positionMapper.getPositionsByAccountNum(accountNum);
@@ -54,7 +55,7 @@ public class CancelHandler extends ActionsHandler {
                                     if (posToBeReAdd.getSymbol().equals(order.getSymbol())) {
                                         hasOldPos = true;
                                         posToBeReAdd.setAmount(posToBeReAdd.getAmount() + order.getAmount());
-                                        System.out.println("set " + posToBeReAdd.getSymbol() + " to " +posToBeReAdd.getAmount());
+                                        //System.out.println("set " + posToBeReAdd.getSymbol() + " to " +posToBeReAdd.getAmount());
                                         positionMapper.updatePosition(posToBeReAdd);
                                         break;
                                     }
@@ -63,7 +64,7 @@ public class CancelHandler extends ActionsHandler {
                                     Account account = accountMapper.getAccountByNum(accountNum);
                                     Position posToBeReAdd = new Position(order.getAmount(), order.getSymbol(), account);
                                     positionMapper.insertPosition(posToBeReAdd);
-                                    System.out.println("add new " + posToBeReAdd.getSymbol() + " to " + posToBeReAdd.getAmount());
+                                    //System.out.println("add new " + posToBeReAdd.getSymbol() + " to " + posToBeReAdd.getAmount());
                                 }
                             }
                             res += "<canceled shares=\"" + order.getAmount() + "\" time=\"" + order.getFormalTime() + "\">\n";
@@ -72,20 +73,20 @@ public class CancelHandler extends ActionsHandler {
                             res += "<executed shares=\"" + order.getAmount() + "\" price=\"" + order.getLimit_price() +"\" time=\"" + order.getFormalTime() + "\">\n";
                         }
                     }
-                    sqlSession.commit();
+                    //sqlSession.commit();
                     success = true;
                 } catch (Exception e) {
                     sqlSession.rollback();
                     retries++;
                 }
-                if (!success) {
-                    res += "<error id=\"" + transactionId + "\">" + "exceed retry times for transaction" + "</error>\n";
-                    res += "</canceled>\n";
-                    return res;
-                }
+            }
+            if (!success) {
+                res += "<error id=\"" + transactionId + "\">" + "exceed retry times for transaction" + "</error>\n";
                 res += "</canceled>\n";
                 return res;
             }
+            res += "</canceled>\n";
+            return res;
         } catch (Exception e) {
             e.printStackTrace();
         }

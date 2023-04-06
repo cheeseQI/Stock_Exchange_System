@@ -6,23 +6,24 @@
         <id property="positionId" column="position_id"/>
         <result property="amount" column="amount"/>
         <result property="symbol" column="symbol"/>
+        <result column="version" property="version"/>
         <association property="account" column="account_id" javaType="Account" resultMap="AccountMapper.accountResultMap"/>
     </resultMap>
 
     <select id="getPositionById" resultMap="positionResultMap">
-        SELECT p.position_id, p.amount, p.symbol, a.account_id, a.balance, a.account_num
+        SELECT p.position_id, p.amount, p.symbol, p.version, a.account_id, a.balance, a.account_num
         FROM position p
                  JOIN account a ON p.account_id = a.account_id
         WHERE p.position_id = #{position_id}
     </select>
 
     <select id="getPositionsByAccountId" resultMap="positionResultMap">
-        SELECT position_id, amount, symbol, account_id
+        SELECT position_id, amount, symbol, version, account_id
         FROM position
         WHERE account_id = #{account.accountId}
     </select>
     <select id="getPositionsByAccountNum" resultMap="positionResultMap">
-        SELECT p.position_id, p.amount, p.symbol, a.account_id, a.balance, a.account_num
+        SELECT p.position_id, p.amount, p.symbol, p.version, a.account_id, a.balance, a.account_num
         FROM position p
                  JOIN account a ON p.account_id = a.account_id
         WHERE a.account_num = #{accountNum}
@@ -33,7 +34,7 @@
     </insert>
 
     <update id="updatePosition" parameterType="Position">
-        UPDATE position SET amount = #{amount}, symbol = #{symbol}, account_id = #{account.accountId} WHERE position_id = #{positionId}
+        UPDATE position SET amount = #{amount}, symbol = #{symbol}, account_id = #{account.accountId}, version = #{version} + 1 WHERE position_id = #{positionId} AND version=#{version}
     </update>
 
     <delete id="deletePositionById">

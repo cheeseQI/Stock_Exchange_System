@@ -79,7 +79,7 @@ public class ExecuteHandler extends ActionsHandler {
                 orderById.setStatus(Status.EXECUTED);
                 orderById.setTime();
                 orderMapper.updateOrder(orderById);
-                sqlSession.commit();
+                //sqlSession.commit();
                 updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
                 orders.remove(0);
             }

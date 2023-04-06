@@ -17,7 +17,7 @@ public class OpenHandler extends ActionsHandler {
     }
 
     @Override
-    public String executeAction(){
+    public String executeAction() {
         if (!checkAccountFormat(accountNum)) {
             return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Invalid Account number format" + "</error>";
         }
@@ -34,41 +34,60 @@ public class OpenHandler extends ActionsHandler {
             return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Limit price should be positive number" + "</error>";
         }
         SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()){
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
             OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
-            if (Double.parseDouble(amount) < 0) { //sell
-                List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
-                for(Position position : positions) {
-                    if(position.getSymbol().equals(symbol)) { // Symbol found in the list
-                        double existShare = position.getAmount();
-                        double needShare = Math.abs(Double.parseDouble(amount));
-                        if (needShare > existShare) {
-                            return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have enough shares" + "</error>";
+            int retries = 0;
+            boolean success = false;
+            while (!success && retries < SystemConstant.MAX_RETRY) {
+                try {
+                    if (Double.parseDouble(amount) < 0) { //sell
+                        List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
+                        for(Position position : positions) {
+                            if(position.getSymbol().equals(symbol)) { // Symbol found in the list
+                                double existShare = position.getAmount();
+                                double needShare = Math.abs(Double.parseDouble(amount));
+                                if (needShare > existShare) {
+                                    return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have enough shares" + "</error>";
+                                }
+                                position.setAmount(existShare - needShare);
+                                int result = positionMapper.updatePosition(position);
+                                if (result == 0) {
+                                    //System.out.println("version " + position.getVersion());
+                                    throw new RuntimeException("Update position failed due to concurrency conflict");
+                                }
+                                //sqlSession.commit();
+                                //open new sell order
+                                return openNewOrder(sqlSession, accountMapper, orderMapper);
+                            }
                         }
-                        position.setAmount(existShare - needShare);
-                        positionMapper.updatePosition(position);
-                        sqlSession.commit();
-                        //open new sell order
+                        return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have this symbol" + "</error>";
+                    } else { //buy
+                        double needBalance = Double.parseDouble(amount) * Double.parseDouble(limit_price);
+                        Account accountByNum = accountMapper.getAccountByNum(accountNum);
+                        double originBalance = accountByNum.getBalance();
+                        if (originBalance < needBalance) {
+                            return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have enough balance" + "</error>";
+                        }
+                        accountByNum.setBalance(originBalance - needBalance);
+                        int result = accountMapper.updateAccount(accountByNum);
+                        if (result == 0) {
+                            //System.out.println();
+                            throw new RuntimeException("Update position failed due to concurrency conflict");
+                        }
+                        //sqlSession.commit();
                         return openNewOrder(sqlSession, accountMapper, orderMapper);
                     }
+                } catch (Exception e) {
+                    sqlSession.rollback();
+                    retries++;
                 }
-                return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have this symbol" + "</error>";
             }
-            else { //buy
-                double needBalance = Double.parseDouble(amount) * Double.parseDouble(limit_price);
-                Account accountByNum = accountMapper.getAccountByNum(accountNum);
-                double originBalance = accountByNum.getBalance();
-                if (originBalance < needBalance) {
-                    return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "Account doesn't have enough balance" + "</error>";
-                }
-                accountByNum.setBalance(originBalance - needBalance);
-                accountMapper.updateAccount(accountByNum);
-                sqlSession.commit();
-                return openNewOrder(sqlSession, accountMapper, orderMapper);
+            if (!success) {
+                return "<error sym=\"" + symbol + "\" amount=\"" + amount + "\" limit=\"" + limit_price + "\">" + "exceed retry times for transaction" + "</error>";
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

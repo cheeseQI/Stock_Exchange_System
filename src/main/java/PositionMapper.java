@@ -10,7 +10,7 @@ public interface PositionMapper {
 
     void insertPosition(Position position);
 
-    void updatePosition(Position position);
+    int updatePosition(Position position);
 
     void deletePositionById(int positionId);
 

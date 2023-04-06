@@ -9,7 +9,7 @@ public interface AccountMapper {
 
     void insertAccount(Account account);
 
-    void updateAccount(Account account);
+    int updateAccount(Account account);
 
     void deleteAccount(String accountId);
 

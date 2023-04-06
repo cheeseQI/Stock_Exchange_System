@@ -2,6 +2,7 @@ public class Position {
     private int positionId;
     private double amount;
     private String symbol;
+    private int version;
     private Account account;
 
     public Position() {
@@ -51,4 +52,13 @@ public class Position {
     public void setPositionId(int positionId) {
         this.positionId = positionId;
     }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
 }

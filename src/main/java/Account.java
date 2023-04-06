@@ -5,6 +5,8 @@ public class Account {
     // user choose
     private String accountNum;
 
+    private int version;
+
     public Account() {
     }
 
@@ -41,5 +43,13 @@ public class Account {
 
     public int getAccountId() {
         return accountId;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

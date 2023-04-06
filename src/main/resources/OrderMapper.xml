@@ -8,7 +8,7 @@
         <result property="amount" column="amount"/>
         <result property="limit_price" column="limit_price"/>
         <result property="status" column="status"/>
-        <result property="time" column="time"/>
+        <result property="version" column="version"/>
         <association property="account" column="account_id" javaType="Account" resultMap="AccountMapper.accountResultMap"/>
     </resultMap>
 
@@ -22,7 +22,7 @@
     </select>
 
     <select id="findOrderByTransId" resultMap="OrderResultMap" parameterType="long">
-        SELECT o.id, o.symbol, o.amount, o.limit_price, o.status, o.time, o.trans_id, a.account_id, a.balance, a.account_num
+        SELECT o.id, o.symbol, o.amount, o.limit_price, o.status, o.time, o.trans_id, o.version, a.account_id, a.balance, a.account_num
         FROM order_table o
                  JOIN account a ON o.account_id = a.account_id
         WHERE o.trans_id = #{transId}
@@ -34,8 +34,15 @@
 
     <update id="updateOrder" parameterType="Order">
         UPDATE order_table
-        SET symbol = #{symbol}, amount = #{amount}, limit_price = #{limit_price}, account_id = #{account.accountId}, status = #{status}, time = #{time}, trans_id= #{transId}
-        WHERE id = #{id} AND status = #{status}
+        SET symbol = #{symbol},
+            amount = #{amount},
+            limit_price = #{limit_price},
+            account_id = #{account.accountId},
+            status = #{status},
+            time = #{time},
+            trans_id = #{transId},
+            version = #{version} + 1
+        WHERE id = #{id} AND version = #{version}
     </update>
 
     <delete id="deleteOrder" parameterType="int">

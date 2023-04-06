@@ -11,8 +11,7 @@ public interface OrderMapper {
 
     List<Order> findOrderBySymbolAndStatus(@Param("symbol") String symbol, @Param("status") Status status);
 
-    void updateOrder(Order order);
-    int updateOrder(Order order, Status status);
+    int updateOrder(Order order);
 
     void deleteOrder(int id);
 }

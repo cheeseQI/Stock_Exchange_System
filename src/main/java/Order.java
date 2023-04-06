@@ -10,6 +10,7 @@ public class Order {
     private double limit_price;
     private Status status;
     private long time;
+    private int version;
     private Account account;
 
     public Order(){}
@@ -97,6 +98,14 @@ public class Order {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
 }
