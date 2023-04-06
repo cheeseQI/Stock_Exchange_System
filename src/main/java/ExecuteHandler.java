@@ -56,58 +56,75 @@ public class ExecuteHandler extends ActionsHandler {
                 else {
                     matchPrice = buyOrder.getLimit_price();
                 }
-                orderInfoUpdate(buyOrder, matchedAmount, buyOrders, matchPrice, false);
-                sellOrder.setAmount(sellOrder.getAmount() + matchedAmount);
-                orderInfoUpdate(sellOrder, matchedAmount, sellOrders, matchPrice, true);
-            }
-            else {
+
+                SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
+                try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+                    int retries = 0;
+                    boolean success = false;
+                    while (!success && retries < SystemConstant.MAX_RETRY) {
+                        try {
+                            orderInfoUpdate(sqlSession, buyOrder, matchedAmount, buyOrders, matchPrice, false);
+                            sellOrder.setAmount(sellOrder.getAmount() + matchedAmount);
+                            orderInfoUpdate(sqlSession, sellOrder, matchedAmount, sellOrders, matchPrice, true);
+                            success = true;
+                        } catch (Exception e) {
+                            sqlSession.rollback();
+                            retries++;
+                        }
+                    }
+                    if (!success) {
+                        return null; // todo: any action for exceed limit
+                    }
+                    sqlSession.commit();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
                 break;
             }
         }
         return null;
     }
 
-    private void orderInfoUpdate(Order order, double matchedAmount, ArrayList<Order> orders, double matchPrice, boolean sell) {
-        SqlSessionFactory sqlSessionFactory = MyBatisUtil.getSqlSessionFactory();
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()){
-            PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
-            AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
-            OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
-            if (order.getAmount() == 0) {
-                Order orderById = orderMapper.findOrderById(order.getId());
-                orderById.setLimit_price(matchPrice);
-                orderById.setStatus(Status.EXECUTED);
-                orderById.setTime();
-                orderMapper.updateOrder(orderById);
-                //sqlSession.commit();
-                updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
-                orders.remove(0);
+    private void orderInfoUpdate(SqlSession sqlSession, Order order, double matchedAmount, ArrayList<Order> orders, double matchPrice, boolean sell) {
+        PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
+        AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
+        OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
+        if (order.getAmount() == 0) {
+            Order orderById = orderMapper.findOrderById(order.getId());
+            orderById.setLimit_price(matchPrice);
+            orderById.setStatus(Status.EXECUTED);
+            orderById.setTime();
+            int result = orderMapper.updateOrder(orderById);
+            if (result == 0) {
+                throw new RuntimeException("Update order failed due to concurrency conflict");
             }
-            else {//split order
-                Order orderOpen = new Order(order.getTransId(), order.getSymbol(), order.getAmount(), order.getLimit_price(), Status.OPEN, order.getAccount());
-                Order orderExecuted;// Replace the original order with the split order
-                if (sell) {
-                    orderExecuted = new Order(order.getTransId(), order.getSymbol(), -matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
-                }
-                else {
-                    orderExecuted = new Order(order.getTransId(), order.getSymbol(), matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
-                }
-                updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
+            //sqlSession.commit();
+            updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
+            orders.remove(0);
+        }
+        else {//split order
+            Order orderOpen = new Order(order.getTransId(), order.getSymbol(), order.getAmount(), order.getLimit_price(), Status.OPEN, order.getAccount());
+            Order orderExecuted;// Replace the original order with the split order
+            if (sell) {
+                orderExecuted = new Order(order.getTransId(), order.getSymbol(), -matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
+            }
+            else {
+                orderExecuted = new Order(order.getTransId(), order.getSymbol(), matchedAmount, matchPrice, Status.EXECUTED, order.getAccount());
+            }
+            updateAccountAndPosition(order, matchedAmount, matchPrice, sell, sqlSession, accountMapper, positionMapper);
 
-                orderMapper.deleteOrder(order.getId());
-                orderMapper.insertOrder(orderExecuted);
-                orderMapper.insertOrder(orderOpen);
-                List<Order> orderOpens = orderMapper.findOrderByTransId(orderOpen.getTransId()); //to get the orderOpen's id
-                sqlSession.commit();
-                for (Order order1 : orderOpens) {
-                    if (order1.getStatus().equals(Status.OPEN)) {
-                        orders.set(0, order1); // Replace the original order with the split order
-                        break;
-                    }
+            orderMapper.deleteOrder(order.getId());
+            orderMapper.insertOrder(orderExecuted);
+            orderMapper.insertOrder(orderOpen);
+            List<Order> orderOpens = orderMapper.findOrderByTransId(orderOpen.getTransId()); //to get the orderOpen's id
+            //sqlSession.commit();
+            for (Order order1 : orderOpens) {
+                if (order1.getStatus().equals(Status.OPEN)) {
+                    orders.set(0, order1); // Replace the original order with the split order
+                    break;
                 }
             }
-        }catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -116,8 +133,11 @@ public class ExecuteHandler extends ActionsHandler {
             int accountId = order.getAccount().getAccountId();
             Account sellAccount = accountMapper.getAccountById(accountId);
             sellAccount.setBalance(sellAccount.getBalance() + matchedAmount * matchPrice);
-            accountMapper.updateAccount(sellAccount);
-            sqlSession.commit();
+            int result = accountMapper.updateAccount(sellAccount);
+            if (result == 0) {
+                throw new RuntimeException("Update account failed due to concurrency conflict");
+            }
+            //sqlSession.commit();
         }
         else { //update position
             Account buyAccount = accountMapper.getAccountById(order.getAccount().getAccountId());
@@ -134,8 +154,11 @@ public class ExecuteHandler extends ActionsHandler {
                 found = true;
                 double newShare = position.getAmount() + matchedAmount;
                 position.setAmount(newShare);
-                positionMapper.updatePosition(position);
-                sqlSession.commit();
+                int result = positionMapper.updatePosition(position);
+                if (result == 0) {
+                    throw new RuntimeException("Update position failed due to concurrency conflict");
+                }
+                //sqlSession.commit();
                 break;
             }
         }
@@ -143,7 +166,7 @@ public class ExecuteHandler extends ActionsHandler {
             Account account = accountMapper.getAccountByNum(accountNum);
             Position position = new Position(matchedAmount, symbol, account);
             positionMapper.insertPosition(position);
-            sqlSession.commit();
+            //sqlSession.commit();
         }
     }
 }

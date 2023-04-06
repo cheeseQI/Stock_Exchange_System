@@ -34,8 +34,8 @@ public class CancelHandler extends ActionsHandler {
                         if (order.getStatus() == Status.OPEN) {
                             order.setStatus(Status.CANCELED);
                             order.setTime();
-                            int result = orderMapper.updateOrder(order);
-                            if (result == 0) {
+                            int resultForOrder = orderMapper.updateOrder(order);
+                            if (resultForOrder == 0) {
                                 //System.out.println(order.getVersion() + " is the version");
                                 throw new RuntimeException("Update order failed due to concurrency conflict");
                             }
@@ -47,7 +47,11 @@ public class CancelHandler extends ActionsHandler {
 //                                        + "price " + price + "amount: " + order.getAmount());
                                 accountToBeRefund.setBalance(accountToBeRefund.getBalance() + price * order.getAmount());
                                 //System.out.println("new balance: " + accountToBeRefund.getBalance());
-                                accountMapper.updateAccount(accountToBeRefund);
+                                int resultForAccount = accountMapper.updateAccount(accountToBeRefund);
+                                if (resultForAccount == 0) {
+                                    //System.out.println(order.getVersion() + " is the version");
+                                    throw new RuntimeException("Update account failed due to concurrency conflict");
+                                }
                             } else {
                                 List<Position> positionList = positionMapper.getPositionsByAccountNum(accountNum);
                                 boolean hasOldPos = false;
@@ -56,7 +60,11 @@ public class CancelHandler extends ActionsHandler {
                                         hasOldPos = true;
                                         posToBeReAdd.setAmount(posToBeReAdd.getAmount() + order.getAmount());
                                         //System.out.println("set " + posToBeReAdd.getSymbol() + " to " +posToBeReAdd.getAmount());
-                                        positionMapper.updatePosition(posToBeReAdd);
+                                        int resultForPosition = positionMapper.updatePosition(posToBeReAdd);
+                                        if (resultForPosition == 0) {
+                                            //System.out.println(order.getVersion() + " is the version");
+                                            throw new RuntimeException("Update position failed due to concurrency conflict");
+                                        }
                                         break;
                                     }
                                 }

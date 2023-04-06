@@ -125,7 +125,7 @@ public class XMLParserTest {
     @Test
     public void testParseOpenFunction() throws IOException, ParserConfigurationException, SAXException {
         String xml = "<transactions id=\"777\">\n" +
-                "<order sym=\"BIT\" amount=\"-5\" limit=\"1\"/> \n" +
+                "<order sym=\"BIT\" amount=\"5\" limit=\"1\"/> \n" +
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();
