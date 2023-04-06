@@ -144,7 +144,7 @@ public class ExecuteHandler extends ActionsHandler {
             if (matchPrice != order.getLimit_price()) {
                 buyAccount.setBalance(buyAccount.getBalance() + matchedAmount * (order.getLimit_price() - matchPrice));
                 accountMapper.updateAccount(buyAccount);
-                sqlSession.commit();
+                //sqlSession.commit();
             }
             updatePositionInfo(order.getSymbol(), buyAccount.getAccountNum(), matchedAmount, sqlSession, accountMapper, positionMapper);
         }

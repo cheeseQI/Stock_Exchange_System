@@ -46,8 +46,8 @@ public class XMLParserTest {
 
     @Test
     public void testParseQueryFunction() throws IOException, SAXException, ParserConfigurationException {
-        String xml = "<transactions id=\"777\">\n" +
-                " <query id=\"1\"/> \n" +
+        String xml = "<transactions id=\"2\">\n" +
+                " <query id=\"4\"/> \n" +
                 "</transactions>";
         XMLParser xmlParser = new XMLParser(xml);
         xmlParser.parseXML();

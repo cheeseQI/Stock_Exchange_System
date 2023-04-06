@@ -45,10 +45,10 @@ public class MatchingEngineTest {
     }
     @Test
     public void testLength() throws IOException {
-        String len = "<transactions id=\"3\">\n" +
-                " <order sym=\"JPN\" amount=\"-45\" limit=\"12\"/>\n" +
-                " <order sym=\"SPY\" amount=\"20\" limit=\"8\"/>\n" +
-                " <order sym=\"CNY\" amount=\"-20\" limit=\"39\"/>\n" +
+        String len = "<transactions id=\"2\">\n" +
+                "    <query id=\"4\"/>\n" +
+                "    <cancel id=\"4\"/>\n" +
+                "    <query id=\"4\"/>\n" +
                 "</transactions>";
         System.out.println(len.length());
     }

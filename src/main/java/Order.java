@@ -78,6 +78,7 @@ public class Order {
     }
 
     public String getFormalTime() {
+        System.out.println("time is : " + this.time);
         Date date = new Date(this.time * 1000);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);
