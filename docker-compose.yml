@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hw4
+      POSTGRES_DB: postgres
+    volumes:
+      - ./account_table.sql:/docker-entrypoint-initdb.d/account_table.sql
+      - ./order_table.sql:/docker-entrypoint-initdb.d/order_table.sql
+      - ./position_table.sql:/docker-entrypoint-initdb.d/position_table.sql
+    ports:
+      - "5555:5432"
+
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "12345:12345"
+    depends_on:
+      - postgres

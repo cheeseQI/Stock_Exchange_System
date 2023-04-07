@@ -78,7 +78,7 @@ public class XMLParser {
     public void parseTransactionsXML(Element transElement) {
         try {
             String accountNum = transElement.getAttribute(SystemConstant.ID_ATTRIBUTE);
-            System.out.println("Account ID: " + accountNum);
+            //System.out.println("Account ID: " + accountNum);
             NodeList children = transElement.getChildNodes();
 
             for (int i = 0; i < children.getLength(); i++) {
@@ -96,7 +96,7 @@ public class XMLParser {
                             break;
                         case "query":
                             String queryTransId = childElem.getAttribute("id");
-                            System.out.println("Query - Transaction ID: " + queryTransId);
+                            //System.out.println("Query - Transaction ID: " + queryTransId);
                             if (!MyUtil.isNumeric(queryTransId)) {
                                 response += "<error id=\"" + queryTransId + "\">" + "invalid transaction id" + "</error>\n";
                                 break;
@@ -106,7 +106,7 @@ public class XMLParser {
                             break;
                         case "cancel":
                             String cancelTransId = childElem.getAttribute("id");
-                            System.out.println("Cancel - Transaction ID: " + cancelTransId);
+                            //System.out.println("Cancel - Transaction ID: " + cancelTransId);
                             if (!MyUtil.isNumeric(cancelTransId)) {
                                 response += "<error id=\"" + cancelTransId + "\">" + "invalid transaction id" + "</error>\n";
                                 break;

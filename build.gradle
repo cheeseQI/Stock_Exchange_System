@@ -5,12 +5,15 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/4.4.1/userguide/tutorial_java_projects.html
  */
-
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
 // Apply the application plugin to add support for building an application
 apply plugin: 'application'
+
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -21,15 +24,19 @@ repositories {
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
-    compile 'com.google.guava:guava:23.0'
+    implementation  'com.google.guava:guava:23.0'
     // MyBatis core
     implementation 'org.mybatis:mybatis:3.5.7'
     // PostgreSQL JDBC Driver
     implementation 'org.postgresql:postgresql:42.2.23'
     // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
+    testImplementation  'junit:junit:4.12'
 }
 
 // Define the main class for the application
 mainClassName = 'App'
-
+jar {
+    manifest {
+        attributes 'Main-Class': 'App'
+    }
+}

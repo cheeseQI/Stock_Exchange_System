@@ -9,14 +9,6 @@ import java.util.List;
 public class App {
 
     public static void main(String[] args) {
-        SqlSession sqlSession = MyBatisUtil.getSqlSession();
-        PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
-        AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
-        OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
-        positionMapper.deleteAll();
-        orderMapper.deleteAll();
-        accountMapper.deleteAll();
-        sqlSession.commit();
         MatchingEngine matchingEngine = new MatchingEngine();
         matchingEngine.start();
     }

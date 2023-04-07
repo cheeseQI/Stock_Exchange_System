@@ -20,7 +20,7 @@ public class ExecuteHandler extends ActionsHandler {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             OrderMapper orderMapper = sqlSession.getMapper(OrderMapper.class);
             List<Order> orders = orderMapper.findOrderBySymbolAndStatus(order.getSymbol(), Status.OPEN);
-            System.out.println(orders.size());
+            //System.out.println(orders.size());
             sqlSession.commit();
             for (Order ord : orders) {
                 insertToList(ord);

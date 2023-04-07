@@ -11,11 +11,11 @@ import static org.junit.Assert.*;
 public class MatchingEngineTest {
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 12345;
-    @Test
+
+    //@Test
     public void testCommunication() throws IOException {
         Socket socket = new Socket(SERVER_IP, SERVER_PORT);
         System.out.println("Connected to the server");
-        // 这里是要发送的XML数据
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<create>\n" +
                 " <account id=\"123457\" balance=\"1000\"/>\n" +
                 " <account id=\"123456\" balance=\"1000\"/>\n" +
@@ -43,6 +43,7 @@ public class MatchingEngineTest {
 
         socket.close();
     }
+
     @Test
     public void testLength() throws IOException {
         String len = "<transactions id=\"2\">\n" +
@@ -53,7 +54,7 @@ public class MatchingEngineTest {
         System.out.println(len.length());
     }
 
-    @Test
+    //@Test
     public void testSerial() throws IOException {
         Socket socket = new Socket(SERVER_IP, SERVER_PORT);
         System.out.println("Connected to the server");

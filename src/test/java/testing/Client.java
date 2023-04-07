@@ -17,8 +17,8 @@ public class Client implements Runnable {
     }
 
     public static void main(String[] args) {
-        String xmlFilePath = "src/test/resources/load_test1.txt";
-        int numberOfClients = 10;
+        String xmlFilePath = "src/test/resources/test7.txt";
+        int numberOfClients = 1; // set to any number under the max connections limit
         for (int i = 0; i < numberOfClients; i++) {
             Client client = new Client(xmlFilePath);
             Thread clientThread = new Thread(client);
@@ -30,10 +30,7 @@ public class Client implements Runnable {
     public void run() {
         try {
             Socket socket = new Socket(SERVER_IP, SERVER_PORT);
-
-            // 从本地文件读取XML字符串
             String xml = readXMLFromFile(xmlFilePath);
-
             byte[] xmlBytes = xml.getBytes(StandardCharsets.UTF_8);
             int xmlLength = xmlBytes.length;
             long startTime = System.currentTimeMillis();
@@ -55,7 +52,7 @@ public class Client implements Runnable {
             long endTime = System.currentTimeMillis();
             long elapsedTime = endTime - startTime;
                         System.out.println("Elapsed time: " + elapsedTime + " milliseconds");
-            System.out.println("Response from the server: " + response.toString());
+            System.out.println(response);
             socket.close();
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());

@@ -46,7 +46,7 @@ public class QueryHandler extends ActionsHandler {
                 }
             }
             res += "</status>\n";
-            System.out.println(res);
+            //System.out.println(res);
             return res;
         }  catch (Exception e) {
             e.printStackTrace();

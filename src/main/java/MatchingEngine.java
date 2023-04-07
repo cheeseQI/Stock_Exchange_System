@@ -30,8 +30,8 @@ public class MatchingEngine {
                 reader.read(xmlData, 0, xmlLength);
                 String xml = new String(xmlData);
 
-                System.out.println("Received XML length: " + xmlLength);
-                System.out.println("Received XML data: " + xml);
+                //System.out.println("Received XML length: " + xmlLength);
+                //System.out.println("Received XML data: " + xml);
                 XMLParser xmlParser = new XMLParser(xml);
                 xmlParser.parseXML();
 
@@ -45,7 +45,7 @@ public class MatchingEngine {
                 reader.close();
                 writer.close();
                 socket.close();
-                System.out.println("send successfully");
+                //System.out.println("send successfully");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ParserConfigurationException e) {
