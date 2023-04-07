@@ -17,7 +17,7 @@ public class Client implements Runnable {
     }
 
     public static void main(String[] args) {
-        String xmlFilePath = "src/test/resources/test7.txt";
+        String xmlFilePath = "src/test/resources/test1.txt";
         int numberOfClients = 1; // set to any number under the max connections limit
         for (int i = 0; i < numberOfClients; i++) {
             Client client = new Client(xmlFilePath);

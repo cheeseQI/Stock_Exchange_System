@@ -37,7 +37,7 @@ public class CreateSymbolHandler extends ActionsHandler {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()){
             PositionMapper positionMapper = sqlSession.getMapper(PositionMapper.class);
             AccountMapper accountMapper = sqlSession.getMapper(AccountMapper.class);
-            List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
+//            List<Position> positions = positionMapper.getPositionsByAccountNum(accountNum);
             Account account = accountMapper.getAccountByNum(accountNum);
             Position position = new Position(Double.parseDouble(amount), symbol, account);
             positionMapper.insertOrUpdatePosition(position);
