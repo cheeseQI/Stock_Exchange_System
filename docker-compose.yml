@@ -12,8 +12,6 @@ services:
       - ./account_table.sql:/docker-entrypoint-initdb.d/account_table.sql
       - ./order_table.sql:/docker-entrypoint-initdb.d/order_table.sql
       - ./position_table.sql:/docker-entrypoint-initdb.d/position_table.sql
-    ports:
-      - "5555:5432"
 
   app:
     build: .
